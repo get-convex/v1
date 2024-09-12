@@ -1,6 +1,12 @@
 import { updateSession } from "@v1/supabase/middleware";
 import { createI18nMiddleware } from "next-international/middleware";
 import { type NextRequest, NextResponse } from "next/server";
+import {
+  convexAuthNextjsMiddleware,
+  createRouteMatcher,
+  isAuthenticatedNextjs,
+  nextjsMiddlewareRedirect,
+} from "@convex-dev/auth/nextjs/server";
 
 const I18nMiddleware = createI18nMiddleware({
   locales: ["en", "fr"],
@@ -8,21 +14,26 @@ const I18nMiddleware = createI18nMiddleware({
   urlMappingStrategy: "rewrite",
 });
 
-export async function middleware(request: NextRequest) {
-  const { response, user } = await updateSession(
-    request,
-    I18nMiddleware(request),
-  );
-
-  if (!request.nextUrl.pathname.endsWith("/login") && !user) {
-    return NextResponse.redirect(new URL("/login", request.url));
+const isSignInPage = createRouteMatcher(["/login"]);
+ 
+export default convexAuthNextjsMiddleware((request) => {
+  if (isSignInPage(request) && isAuthenticatedNextjs()) {
+    return nextjsMiddlewareRedirect(request, "/product");
+  }
+  if (!isSignInPage(request) && !isAuthenticatedNextjs()) {
+    return nextjsMiddlewareRedirect(request, "/signin");
   }
 
-  return response;
-}
+    return I18nMiddleware(request);
+});
 
 export const config = {
   matcher: [
     "/((?!_next/static|api|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+
+    // all routes except static assets
+    "/((?!.*\\..*|_next).*)",
+    "/",
+    "/(api|trpc)(.*)",
   ],
 };
