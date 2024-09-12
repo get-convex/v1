@@ -1,6 +1,4 @@
-import { updateSession } from "@v1/supabase/middleware";
 import { createI18nMiddleware } from "next-international/middleware";
-import { type NextRequest, NextResponse } from "next/server";
 import {
   convexAuthNextjsMiddleware,
   createRouteMatcher,
@@ -18,13 +16,13 @@ const isSignInPage = createRouteMatcher(["/login"]);
  
 export default convexAuthNextjsMiddleware((request) => {
   if (isSignInPage(request) && isAuthenticatedNextjs()) {
-    return nextjsMiddlewareRedirect(request, "/product");
+    return nextjsMiddlewareRedirect(request, "/");
   }
   if (!isSignInPage(request) && !isAuthenticatedNextjs()) {
-    return nextjsMiddlewareRedirect(request, "/signin");
+    return nextjsMiddlewareRedirect(request, "/login");
   }
 
-    return I18nMiddleware(request);
+  return I18nMiddleware(request);
 });
 
 export const config = {

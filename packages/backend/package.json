@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "convex dev",
+    "dev": "convex dev --tail-logs",
     "setup": "convex dev --until-success"
   },
   "author": "",
