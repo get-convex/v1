@@ -1,6 +1,7 @@
 import "@v1/ui/globals.css";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import { cn } from "@v1/ui/cn";
+import { TooltipProvider } from "@v1/ui/tooltip";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
@@ -39,7 +40,9 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <ConvexClientProvider>{children}</ConvexClientProvider>
+            <TooltipProvider delayDuration={0}>
+              <ConvexClientProvider>{children}</ConvexClientProvider>
+            </TooltipProvider>
           </ThemeProvider>
         </body>
       </html>

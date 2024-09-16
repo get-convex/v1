@@ -21,6 +21,7 @@
   "exports": {
     "./globals.css": "./src/globals.css",
     "./cn": "./src/utils/cn.ts",
+    "./avatar": "./src/components/avatar.tsx",
     "./button": "./src/components/button.tsx",
     "./input": "./src/components/input.tsx",
     "./tooltip": "./src/components/tooltip.tsx",
@@ -31,6 +32,7 @@
     "./postcss": "./postcss.config.js"
   },
   "dependencies": {
+    "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-scroll-area": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
