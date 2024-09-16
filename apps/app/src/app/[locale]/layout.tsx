@@ -1,12 +1,11 @@
 import "@v1/ui/globals.css";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
-import { ConvexClientProvider } from "../convex-client-provider";
-import { Footer } from "@/components/footer";
 import { cn } from "@v1/ui/cn";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
+import { ConvexClientProvider } from "../convex-client-provider";
 
 export const metadata: Metadata = {
   title: "Create v1",
@@ -27,26 +26,22 @@ export default function RootLayout({
 }>) {
   return (
     <ConvexAuthNextjsServerProvider>
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(
-          `${GeistSans.variable} ${GeistMono.variable}`,
-          "antialiased",
-        )}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={cn(
+            `${GeistSans.variable} ${GeistMono.variable}`,
+            "antialiased",
+          )}
         >
-          <ConvexClientProvider>
-            {children}
-          </ConvexClientProvider>
-
-          <Footer />
-        </ThemeProvider>
-      </body>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ConvexClientProvider>{children}</ConvexClientProvider>
+          </ThemeProvider>
+        </body>
       </html>
     </ConvexAuthNextjsServerProvider>
   );
