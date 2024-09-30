@@ -2,11 +2,7 @@ import "./src/env.mjs";
 import { withSentryConfig } from "@sentry/nextjs";
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  experimental: {
-    instrumentationHook: process.env.NODE_ENV === "production",
-  },
-};
+const nextConfig = {};
 
 export default withSentryConfig(nextConfig, {
   silent: !process.env.CI,
