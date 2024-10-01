@@ -3,7 +3,7 @@ import { z } from "zod";
 export const username = z
   .string()
   .min(3)
-  .max(20)
+  .max(32)
   .toLowerCase()
   .trim()
   .regex(

@@ -2,7 +2,6 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export * from "./use-double-check";
-export * from "./validators";
 
 /**
  * Returns a function that calls all of its arguments.

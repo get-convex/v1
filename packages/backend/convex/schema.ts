@@ -1,6 +1,16 @@
 import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
-import { v } from "convex/values";
+import { type Infer, v } from "convex/values";
+
+export const CURRENCIES = {
+  USD: "usd",
+  EUR: "eur",
+} as const;
+export const currencyValidator = v.union(
+  v.literal(CURRENCIES.USD),
+  v.literal(CURRENCIES.EUR),
+);
+export type Currency = Infer<typeof currencyValidator>;
 
 export default defineSchema({
   ...authTables,

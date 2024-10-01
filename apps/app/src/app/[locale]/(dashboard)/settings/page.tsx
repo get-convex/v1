@@ -2,9 +2,13 @@
 
 import { useScopedI18n } from "@/locales/client";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { useForm } from "@tanstack/react-form";
+import { zodValidator } from "@tanstack/zod-form-adapter";
 import { api } from "@v1/backend/convex/_generated/api";
 import type { Id } from "@v1/backend/convex/_generated/dataModel";
+import * as validators from "@v1/backend/convex/utils/validators";
 import { Button } from "@v1/ui/button";
+import { Input } from "@v1/ui/input";
 import { UploadInput } from "@v1/ui/upload-input";
 import { useDoubleCheck } from "@v1/ui/utils";
 import type { UploadFileResponse } from "@xixixao/uploadstuff/react";
@@ -16,6 +20,7 @@ export default function DashboardSettings() {
   const user = useQuery(api.users.getUser);
   const { signOut } = useAuthActions();
   const updateUserImage = useMutation(api.users.updateUserImage);
+  const updateUsername = useMutation(api.users.updateUsername);
   const removeUserImage = useMutation(api.users.removeUserImage);
   const generateUploadUrl = useMutation(api.users.generateUploadUrl);
   const handleUpdateUserImage = (uploaded: UploadFileResponse[]) => {
@@ -30,6 +35,16 @@ export default function DashboardSettings() {
     // TODO: Implement delete account
     signOut();
   };
+
+  const usernameForm = useForm({
+    validatorAdapter: zodValidator(),
+    defaultValues: {
+      username: user?.username,
+    },
+    onSubmit: async ({ value }) => {
+      await updateUsername({ username: value.username || "" });
+    },
+  });
 
   if (!user) {
     return null;
@@ -94,6 +109,59 @@ export default function DashboardSettings() {
           )}
         </div>
       </div>
+
+      {/* Username */}
+      <form
+        className="flex w-full flex-col items-start rounded-lg border border-border bg-card"
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          usernameForm.handleSubmit();
+        }}
+      >
+        <div className="flex w-full flex-col gap-4 rounded-lg p-6">
+          <div className="flex flex-col gap-2">
+            <h2 className="text-xl font-medium text-primary">Your Username</h2>
+            <p className="text-sm font-normal text-primary/60">
+              This is your username. It will be displayed on your profile.
+            </p>
+          </div>
+          <usernameForm.Field
+            name="username"
+            validators={{
+              onSubmit: validators.username,
+            }}
+            // biome-ignore lint/correctness/noChildrenProp: <explanation>
+            children={(field) => (
+              <Input
+                placeholder="Username"
+                autoComplete="off"
+                required
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+                className={`w-80 bg-transparent ${
+                  field.state.meta?.errors.length > 0 &&
+                  "border-destructive focus-visible:ring-destructive"
+                }`}
+              />
+            )}
+          />
+          {usernameForm.state.fieldMeta.username?.errors.length > 0 && (
+            <p className="text-sm text-destructive dark:text-destructive-foreground">
+              {usernameForm.state.fieldMeta.username?.errors.join(" ")}
+            </p>
+          )}
+        </div>
+        <div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-t border-border bg-secondary px-6 dark:bg-card">
+          <p className="text-sm font-normal text-primary/60">
+            Please use 32 characters at maximum.
+          </p>
+          <Button type="submit" size="sm">
+            Save
+          </Button>
+        </div>
+      </form>
 
       {/* Delete Account */}
       <div className="flex w-full flex-col items-start rounded-lg border border-destructive bg-card">

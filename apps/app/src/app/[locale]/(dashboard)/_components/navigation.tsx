@@ -22,6 +22,7 @@ import {
   Settings,
   Slash,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LanguageSwitcher } from "./language-switcher";
@@ -50,7 +51,7 @@ export function Navigation({
       <div className="mx-auto flex w-full max-w-screen-xl items-center justify-between py-3">
         <div className="flex h-10 items-center gap-2">
           <Link href="/" className="flex h-10 items-center gap-1">
-            <Logo />
+            <Image src="/logo.png" alt="logo" width={50} height={50} />
           </Link>
           <Slash className="h-6 w-6 -rotate-12 stroke-[1.5px] text-primary/10" />
           <DropdownMenu modal={false}>

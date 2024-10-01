@@ -1,7 +1,9 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { z } from "zod";
+import { type MutationCtx, mutation, query } from "./_generated/server";
 import { auth } from "./auth";
+import { currencyValidator } from "./schema";
 
 export const getUser = query({
   handler: async (ctx) => {
@@ -16,10 +18,51 @@ export const getUser = query({
     }
     return {
       ...user,
+      name: user.username || user.name,
       avatarUrl: user.imageId
         ? await ctx.storage.getUrl(user.imageId)
         : undefined,
     };
+  },
+});
+
+const updateUsername = async (ctx: MutationCtx, username: string) => {
+  const userId = await getAuthUserId(ctx);
+  if (!userId) {
+    return;
+  }
+  const schema = z.object({
+    username: z.string({
+      invalid_type_error: "Invalid Username",
+    }),
+  });
+  const validatedFields = schema.safeParse({
+    username,
+  });
+
+  if (!validatedFields.success) {
+    throw new Error("Invalid username");
+  }
+  await ctx.db.patch(userId, { username });
+};
+
+const updateUsernameMutation = mutation({
+  args: {
+    username: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await updateUsername(ctx, args.username);
+  },
+});
+export { updateUsernameMutation as updateUsername };
+
+export const completeOnboarding = mutation({
+  args: {
+    username: v.string(),
+    currency: currencyValidator,
+  },
+  handler: async (ctx, args) => {
+    await updateUsername(ctx, args.username);
   },
 });
 

@@ -24,7 +24,7 @@ export default function WelcomeEmail() {
       <Tailwind>
         <Body className="my-auto mx-auto font-sans">
           <Container className="border-transparent my-[40px] mx-auto max-w-[600px]">
-            <Logo baseUrl={baseUrl} />
+            <Img src="/logo.png" alt="logo" width={100} height={100} />
             <Heading className="font-normal text-center p-0 my-[30px] mx-0">
               Welcome to v1
             </Heading>
