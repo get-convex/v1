@@ -1,5 +1,6 @@
 "use client";
 
+import { useScopedI18n } from "@/locales/client";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "@v1/backend/convex/_generated/api";
 import type { Id } from "@v1/backend/convex/_generated/dataModel";
@@ -11,6 +12,7 @@ import { useMutation, useQuery } from "convex/react";
 import { Upload } from "lucide-react";
 
 export default function DashboardSettings() {
+  const t = useScopedI18n("settings");
   const user = useQuery(api.users.getUser);
   const { signOut } = useAuthActions();
   const updateUserImage = useMutation(api.users.updateUserImage);
@@ -39,9 +41,11 @@ export default function DashboardSettings() {
       <div className="flex w-full flex-col items-start rounded-lg border border-border bg-card">
         <div className="flex w-full items-start justify-between rounded-lg p-6">
           <div className="flex flex-col gap-2">
-            <h2 className="text-xl font-medium text-primary">Your Avatar</h2>
+            <h2 className="text-xl font-medium text-primary">
+              {t("avatar.title")}
+            </h2>
             <p className="text-sm font-normal text-primary/60">
-              This is your avatar. It will be displayed on your profile.
+              {t("avatar.description")}
             </p>
           </div>
           <label
@@ -74,7 +78,7 @@ export default function DashboardSettings() {
         </div>
         <div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-t border-border bg-secondary px-6 dark:bg-card">
           <p className="text-sm font-normal text-primary/60">
-            Click on the avatar to upload a custom one from your files.
+            {t("avatar.uploadHint")}
           </p>
           {user.avatarUrl && (
             <Button
@@ -85,7 +89,7 @@ export default function DashboardSettings() {
                 removeUserImage({});
               }}
             >
-              Reset
+              {t("avatar.resetButton")}
             </Button>
           )}
         </div>
@@ -94,15 +98,16 @@ export default function DashboardSettings() {
       {/* Delete Account */}
       <div className="flex w-full flex-col items-start rounded-lg border border-destructive bg-card">
         <div className="flex flex-col gap-2 p-6">
-          <h2 className="text-xl font-medium text-primary">Delete Account</h2>
+          <h2 className="text-xl font-medium text-primary">
+            {t("deleteAccount.title")}
+          </h2>
           <p className="text-sm font-normal text-primary/60">
-            Permanently delete your Convex SaaS account, all of your projects,
-            links and their respective stats.
+            {t("deleteAccount.description")}
           </p>
         </div>
         <div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-t border-border bg-red-500/10 px-6 dark:bg-red-500/10">
           <p className="text-sm font-normal text-primary/60">
-            This action cannot be undone, proceed with caution.
+            {t("deleteAccount.warning")}
           </p>
           <Button
             size="sm"
@@ -111,7 +116,9 @@ export default function DashboardSettings() {
               onClick: doubleCheck ? handleDeleteAccount : undefined,
             })}
           >
-            {doubleCheck ? "Are you sure?" : "Delete Account"}
+            {doubleCheck
+              ? t("deleteAccount.confirmButton")
+              : t("deleteAccount.deleteButton")}
           </Button>
         </div>
       </div>

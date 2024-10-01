@@ -1,12 +1,12 @@
 "use client";
+import { I18nProviderClient, useScopedI18n } from "@/locales/client";
 import { buttonVariants } from "@v1/ui/button";
 import { cn } from "@v1/ui/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default async function Layout({
-  children,
-}: { children: React.ReactNode }) {
+const LayoutContainer = ({ children }: { children: React.ReactNode }) => {
+  const t = useScopedI18n("settings.sidebar");
   const pathname = usePathname();
   const isSettingsPath = pathname === "/settings";
   const isBillingPath = pathname === "/billing";
@@ -26,7 +26,7 @@ export default async function Layout({
                 `text-sm text-primary/80 ${isSettingsPath && "font-medium text-primary"}`,
               )}
             >
-              General
+              {t("general")}
             </span>
           </Link>
           <Link
@@ -40,12 +40,23 @@ export default async function Layout({
                 `text-sm text-primary/80 ${isBillingPath && "font-medium text-primary"}`,
               )}
             >
-              Billing
+              {t("billing")}
             </span>
           </Link>
         </div>
         {children}
       </div>
     </div>
+  );
+};
+
+export default function Layout({
+  children,
+  params,
+}: { children: React.ReactNode; params: { locale: string } }) {
+  return (
+    <I18nProviderClient locale={params.locale}>
+      <LayoutContainer>{children}</LayoutContainer>
+    </I18nProviderClient>
   );
 }
