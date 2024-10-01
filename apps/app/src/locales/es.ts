@@ -13,4 +13,9 @@ export default {
     headerDescription: "Administra tus apps y mira tu uso.",
     documentationLink: "Explorar documentación",
   },
+  settings: {
+    title: "Configuración",
+    headerTitle: "Configuración",
+    headerDescription: "Administra tus configuraciones de cuenta.",
+  },
 } as const;

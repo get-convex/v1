@@ -1,9 +1,8 @@
 "use client";
 
-import type { User } from "@/types";
 import { useAuthActions } from "@convex-dev/auth/react";
+import type { api } from "@v1/backend/convex/_generated/api";
 import { Button, buttonVariants } from "@v1/ui/button";
-import { cn } from "@v1/ui/cn";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@v1/ui/dropdown-menu";
 import { Logo } from "@v1/ui/logo";
+import { cn } from "@v1/ui/utils";
+import { type Preloaded, usePreloadedQuery } from "convex/react";
 import {
   Check,
   ChevronDown,
@@ -26,13 +27,19 @@ import { usePathname, useRouter } from "next/navigation";
 import { LanguageSwitcher } from "./language-switcher";
 import { ThemeSwitcher } from "./theme-switcher";
 
-export function Navigation({ user }: { user: User }) {
+export function Navigation({
+  preloadedUser,
+}: {
+  preloadedUser: Preloaded<typeof api.users.getUser>;
+}) {
   const { signOut } = useAuthActions();
   const pathname = usePathname();
   const router = useRouter();
   const isDashboardPath = pathname === "/";
   const isSettingsPath = pathname === "/settings";
   const isBillingPath = pathname === "/billing";
+
+  const user = usePreloadedQuery(preloadedUser);
 
   if (!user) {
     return null;

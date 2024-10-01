@@ -11,4 +11,9 @@ export default {
     headerDescription: "Manage your apps and view your usage.",
     documentationLink: "Explore Documentation",
   },
+  settings: {
+    title: "Settings",
+    headerTitle: "Settings",
+    headerDescription: "Manage your account settings.",
+  },
 } as const;

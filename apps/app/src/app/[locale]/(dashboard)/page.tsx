@@ -6,7 +6,7 @@ export const metadata = {
 };
 
 import { buttonVariants } from "@v1/ui/button";
-import { cn } from "@v1/ui/cn";
+import { cn } from "@v1/ui/utils";
 import { ExternalLink, Plus } from "lucide-react";
 
 export default async function Page() {

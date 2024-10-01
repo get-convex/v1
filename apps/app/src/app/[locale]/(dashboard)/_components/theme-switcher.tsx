@@ -1,10 +1,10 @@
-import { cn } from "@v1/ui/cn";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
 } from "@v1/ui/select";
+import { cn } from "@v1/ui/utils";
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";

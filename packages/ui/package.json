@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "sideEffects": false,
+  "type": "module",
   "files": ["tailwind.config.ts", "postcss.config.js", "globals.css"],
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
@@ -20,7 +21,7 @@
   },
   "exports": {
     "./globals.css": "./src/globals.css",
-    "./cn": "./src/utils/cn.ts",
+    "./utils": "./src/utils/index.ts",
     "./avatar": "./src/components/avatar.tsx",
     "./button": "./src/components/button.tsx",
     "./dropdown-menu": "./src/components/dropdown-menu.tsx",
@@ -31,6 +32,7 @@
     "./dialog": "./src/components/dialog.tsx",
     "./icons": "./src/components/icons.tsx",
     "./scroll-area": "./src/components/scroll-area.tsx",
+    "./upload-input": "./src/components/upload-input.tsx",
     "./tailwind.config": "./tailwind.config.ts",
     "./postcss": "./postcss.config.js"
   },
@@ -42,9 +44,11 @@
     "@radix-ui/react-select": "^2.1.1",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.2",
+    "@xixixao/uploadstuff": "^0.0.5",
     "class-variance-authority": "^0.7.0",
     "lucide-react": "^0.438.0",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.8"
   }
 }

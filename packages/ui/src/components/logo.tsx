@@ -1,4 +1,4 @@
-import { cn } from "@v1/ui/cn";
+import { cn } from "../utils";
 
 interface LogoProps {
   width?: number;
