@@ -23,8 +23,8 @@ export const getUser = query({
         ? await ctx.storage.getUrl(user.imageId)
         : undefined,
       subscription: {
-        planKey: "fake-plan-key",
-        planId: "fake-plan-id",
+        planKey: "free-plan-key",
+        planId: "free-plan-id",
         cancelAtPeriodEnd: false,
         currentPeriodEnd: 5,
       },

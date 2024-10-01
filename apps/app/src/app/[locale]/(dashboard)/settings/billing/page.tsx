@@ -43,8 +43,8 @@ export default function BillingSettings() {
   // Dummy plans data to make all logic below work
   const plans = {
     free: {
-      _id: "fake-id",
-      planKey: "free",
+      _id: "free-plan-id",
+      planKey: "free-plan-key",
       name: "Free",
       description: "Free plan",
       prices: {
@@ -61,8 +61,8 @@ export default function BillingSettings() {
       },
     },
     pro: {
-      _id: "fake-id",
-      planKey: "pro",
+      _id: "pro-plan-id",
+      planKey: "pro-plan-key",
       name: "Pro",
       description: "Pro plan",
       prices: {
