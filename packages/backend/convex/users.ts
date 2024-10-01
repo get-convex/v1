@@ -22,6 +22,13 @@ export const getUser = query({
       avatarUrl: user.imageId
         ? await ctx.storage.getUrl(user.imageId)
         : undefined,
+      subscription: {
+        planKey: "fake-plan-key",
+        planId: "fake-plan-id",
+        cancelAtPeriodEnd: false,
+        currentPeriodEnd: 5,
+      },
+      customerId: undefined,
     };
   },
 });

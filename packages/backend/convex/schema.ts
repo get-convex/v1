@@ -12,6 +12,11 @@ export const currencyValidator = v.union(
 );
 export type Currency = Infer<typeof currencyValidator>;
 
+export const PLANS = {
+  FREE: "free",
+  PRO: "pro",
+} as const;
+
 export default defineSchema({
   ...authTables,
   users: defineTable({

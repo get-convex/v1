@@ -38,7 +38,7 @@ export function Navigation({
   const router = useRouter();
   const isDashboardPath = pathname === "/";
   const isSettingsPath = pathname === "/settings";
-  const isBillingPath = pathname === "/billing";
+  const isBillingPath = pathname === "/settings/billing";
 
   const user = usePreloadedQuery(preloadedUser);
 
@@ -115,7 +115,7 @@ export function Navigation({
                 <Button
                   size="sm"
                   className="w-full"
-                  onClick={() => router.push("/billing")}
+                  onClick={() => router.push("/settings/billing")}
                 >
                   Upgrade to PRO
                 </Button>
@@ -254,7 +254,7 @@ export function Navigation({
           )}
         >
           <Link
-            href="/billing"
+            href="/settings/billing"
             className={cn(
               `${buttonVariants({ variant: "ghost", size: "sm" })} text-primary/80`,
             )}
