@@ -12,10 +12,33 @@ export const currencyValidator = v.union(
 );
 export type Currency = Infer<typeof currencyValidator>;
 
+export const INTERVALS = {
+  MONTH: "month",
+  YEAR: "year",
+} as const;
+export const intervalValidator = v.union(
+  v.literal(INTERVALS.MONTH),
+  v.literal(INTERVALS.YEAR),
+);
+export type Interval = Infer<typeof intervalValidator>;
+
 export const PLANS = {
   FREE: "free",
   PRO: "pro",
 } as const;
+export const planKeyValidator = v.union(
+  v.literal(PLANS.FREE),
+  v.literal(PLANS.PRO),
+);
+export type PlanKey = Infer<typeof planKeyValidator>;
+
+const priceValidator = v.object({
+  polarId: v.string(),
+  amount: v.number(),
+});
+const pricesValidator = v.object({
+  [CURRENCIES.USD]: priceValidator,
+});
 
 export default defineSchema({
   ...authTables,
@@ -29,6 +52,32 @@ export default defineSchema({
     phone: v.optional(v.string()),
     phoneVerificationTime: v.optional(v.number()),
     isAnonymous: v.optional(v.boolean()),
-    subscriptionId: v.optional(v.string()),
+    subscriptionId: v.optional(v.id("subscriptions")),
   }).index("email", ["email"]),
+  plans: defineTable({
+    key: planKeyValidator,
+    polarId: v.string(),
+    name: v.string(),
+    description: v.string(),
+    prices: v.object({
+      [INTERVALS.MONTH]: v.optional(pricesValidator),
+      [INTERVALS.YEAR]: v.optional(pricesValidator),
+    }),
+  })
+    .index("key", ["key"])
+    .index("polarId", ["polarId"]),
+  subscriptions: defineTable({
+    userId: v.id("users"),
+    planId: v.id("plans"),
+    priceStripeId: v.string(),
+    stripeId: v.string(),
+    currency: currencyValidator,
+    interval: intervalValidator,
+    status: v.string(),
+    currentPeriodStart: v.number(),
+    currentPeriodEnd: v.number(),
+    cancelAtPeriodEnd: v.boolean(),
+  })
+    .index("userId", ["userId"])
+    .index("stripeId", ["stripeId"]),
 });

@@ -7,7 +7,7 @@ import { api } from "@v1/backend/convex/_generated/api";
 import * as validators from "@v1/backend/convex/utils/validators";
 import { Button } from "@v1/ui/button";
 import { Input } from "@v1/ui/input";
-import { useMutation, useQuery } from "convex/react";
+import { useAction, useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -15,7 +15,7 @@ import { useFormStatus } from "react-dom";
 
 export default function OnboardingUsername() {
   const user = useQuery(api.users.getUser);
-  const completeOnboarding = useMutation(api.users.completeOnboarding);
+  const completeOnboarding = useAction(api.users.completeOnboarding);
   const router = useRouter();
 
   const { pending } = useFormStatus();
