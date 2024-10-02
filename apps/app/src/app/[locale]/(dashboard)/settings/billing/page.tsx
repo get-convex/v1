@@ -1,17 +1,17 @@
 "use client";
 
 import { getLocaleCurrency } from "@/utils/misc";
+import { Polar } from "@polar-sh/sdk";
 import { api } from "@v1/backend/convex/_generated/api";
 import { CURRENCIES, PLANS } from "@v1/backend/convex/schema";
 import { Button } from "@v1/ui/button";
 import { Switch } from "@v1/ui/switch";
-import { useQuery } from "convex/react";
+import { useAction, useQuery } from "convex/react";
 import { useState } from "react";
 
 export default function BillingSettings() {
   const user = useQuery(api.users.getUser);
-
-  const [selectedPlanId, setSelectedPlanId] = useState<string | undefined>();
+  const createCheckout = useAction(api.subscriptions.createCheckout);
 
   const [selectedPlanInterval, setSelectedPlanInterval] = useState<
     "month" | "year"
@@ -20,14 +20,18 @@ export default function BillingSettings() {
   const currency = getLocaleCurrency();
 
   const handleCreateSubscriptionCheckout = async () => {
-    if (!user || !selectedPlanId) {
+    if (!user) {
       return;
     }
-    const checkoutUrl = undefined;
-    if (!checkoutUrl) {
+    const resp = await createCheckout({
+      productPriceId: selectedPlanId,
+    });
+    console.log("resp", resp);
+    if (!resp.url) {
       return;
     }
-    window.location.href = checkoutUrl;
+
+    window.location.href = resp.url;
   };
   const handleCreateCustomerPortal = async () => {
     if (!user?.customerId) {

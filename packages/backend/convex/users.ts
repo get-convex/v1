@@ -1,9 +1,13 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { Polar } from "@polar-sh/sdk";
 import { v } from "convex/values";
+import { find } from "remeda";
 import { z } from "zod";
-import { type MutationCtx, mutation, query } from "./_generated/server";
+import { api, internal } from "./_generated/api";
+import { type MutationCtx, action, mutation, query } from "./_generated/server";
 import { auth } from "./auth";
 import { currencyValidator } from "./schema";
+import { getFreeProduct } from "./subscriptions";
 
 export const getUser = query({
   handler: async (ctx) => {
@@ -63,13 +67,40 @@ const updateUsernameMutation = mutation({
 });
 export { updateUsernameMutation as updateUsername };
 
-export const completeOnboarding = mutation({
+export const finalizeUser = mutation({
+  args: {
+    username: v.string(),
+    subscriptionId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("User not found");
+    }
+    await updateUsername(ctx, args.username);
+    await ctx.db.patch(userId, {
+      subscriptionId: args.subscriptionId,
+    });
+  },
+});
+
+export const completeOnboarding = action({
   args: {
     username: v.string(),
     currency: currencyValidator,
   },
   handler: async (ctx, args) => {
-    await updateUsername(ctx, args.username);
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("User not found");
+    }
+    const freeProduct = await getFreeProduct();
+    const price = freeProduct?.prices.find(
+      (price) => price.amountType === "free",
+    );
+    await ctx.runMutation(api.users.updateUsername, {
+      username: args.username,
+    });
   },
 });
 
@@ -100,7 +131,7 @@ export const updateUserImage = mutation({
 export const removeUserImage = mutation({
   args: {},
   handler: async (ctx) => {
-    const userId = await auth.getUserId(ctx);
+    const userId = await getAuthUserId(ctx);
     if (!userId) {
       return;
     }
