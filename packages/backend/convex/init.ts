@@ -8,7 +8,7 @@ const seedProducts = [
   {
     key: PLANS.FREE,
     name: "Free",
-    description: "Start with the basics, upgrade anytime.",
+    description: "Some of the things, free forever.",
     amountType: "free",
     prices: {
       [INTERVALS.MONTH]: {
@@ -19,14 +19,14 @@ const seedProducts = [
   {
     key: PLANS.PRO,
     name: "Pro",
-    description: "Access to all features and unlimited projects.",
+    description: "All the things for one low monthly price.",
     amountType: "fixed",
     prices: {
       [INTERVALS.MONTH]: {
-        [CURRENCIES.USD]: 1990,
+        [CURRENCIES.USD]: 2000,
       },
       [INTERVALS.YEAR]: {
-        [CURRENCIES.USD]: 19990,
+        [CURRENCIES.USD]: 20000,
       },
     },
   },
@@ -55,13 +55,14 @@ export default internalAction(async (ctx) => {
   });
   const products = await polar.products.list({
     organizationId: process.env.POLAR_ORGANIZATION_ID!,
+    isArchived: false,
   });
   if (products?.result?.items?.length) {
     console.info("🏃‍♂️ Skipping Polar products creation and seeding.");
     return;
   }
 
-  const res = await asyncMap(seedProducts, async (product) => {
+  await asyncMap(seedProducts, async (product) => {
     // Create Polar product.
     const polarProduct = await polar.products.create({
       organizationId: process.env.POLAR_ORGANIZATION_ID!,
@@ -119,8 +120,6 @@ export default internalAction(async (ctx) => {
       },
     });
   });
-
-  console.log("res", res);
 
   console.info("📦 Polar Products have been successfully created.");
 });
