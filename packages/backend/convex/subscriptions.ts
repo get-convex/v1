@@ -176,6 +176,9 @@ export const replaceSubscription = internalMutation({
       currentPeriodEnd: args.input.currentPeriodEnd,
       cancelAtPeriodEnd: args.input.cancelAtPeriodEnd,
     });
+    await ctx.db.patch(args.userId, {
+      polarSubscriptionPending: false,
+    });
   },
 });
 
