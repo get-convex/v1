@@ -24,6 +24,7 @@ import type * as posts from "../posts.js";
 import type * as subscriptions from "../subscriptions.js";
 import type * as users from "../users.js";
 import type * as utils_validators from "../utils/validators.js";
+import type * as web from "../web.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -43,6 +44,7 @@ declare const fullApi: ApiFromModules<{
   subscriptions: typeof subscriptions;
   users: typeof users;
   "utils/validators": typeof utils_validators;
+  web: typeof web;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

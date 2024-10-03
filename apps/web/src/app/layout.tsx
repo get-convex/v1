@@ -7,6 +7,7 @@ import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { ConvexClientProvider } from "./convex-client-provider";
 
 const DepartureMono = localFont({
   src: "../fonts/DepartureMono-Regular.woff2",
@@ -33,9 +34,11 @@ export default function RootLayout({
           "antialiased dark",
         )}
       >
-        <Header />
-        {children}
-        <Footer />
+        <ConvexClientProvider>
+          <Header />
+          {children}
+          <Footer />
+        </ConvexClientProvider>
 
         <AnalyticsProvider />
       </body>
