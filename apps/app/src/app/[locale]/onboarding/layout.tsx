@@ -1,6 +1,6 @@
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 import { api } from "@v1/backend/convex/_generated/api";
-import { fetchAction, fetchQuery } from "convex/nextjs";
+import { fetchAction, fetchMutation, fetchQuery } from "convex/nextjs";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
@@ -20,7 +20,12 @@ export default async function Layout({
   if (!checkoutUrl) {
     return null;
   }
-  if (!user?.subscription) {
+  if (!user?.subscription && !user?.polarSubscriptionPending) {
+    await fetchMutation(
+      api.subscriptions.setSubscriptionPending,
+      {},
+      { token: convexAuthNextjsToken() },
+    );
     return redirect(checkoutUrl);
   }
   return (

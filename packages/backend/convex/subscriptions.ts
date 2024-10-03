@@ -7,6 +7,7 @@ import {
   action,
   internalMutation,
   internalQuery,
+  mutation,
   query,
 } from "./_generated/server";
 import schema from "./schema";
@@ -174,6 +175,34 @@ export const replaceSubscription = internalMutation({
       currentPeriodStart: args.input.currentPeriodStart,
       currentPeriodEnd: args.input.currentPeriodEnd,
       cancelAtPeriodEnd: args.input.cancelAtPeriodEnd,
+    });
+  },
+});
+
+export const setSubscriptionPending = mutation({
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("User not found");
+    }
+    await ctx.db.patch(userId, {
+      polarSubscriptionPending: true,
+    });
+    await ctx.scheduler.runAfter(
+      1000 * 30,
+      internal.subscriptions.unsetSubscriptionPending,
+      { userId },
+    );
+  },
+});
+
+export const unsetSubscriptionPending = internalMutation({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.userId, {
+      polarSubscriptionPending: false,
     });
   },
 });
