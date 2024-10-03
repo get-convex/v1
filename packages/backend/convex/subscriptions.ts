@@ -2,7 +2,6 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { Polar } from "@polar-sh/sdk";
 import { v } from "convex/values";
 import { api, internal } from "./_generated/api";
-import type { Doc, Id } from "./_generated/dataModel";
 import {
   action,
   internalMutation,

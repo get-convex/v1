@@ -49,7 +49,6 @@ const handleSubscriptionChange = async (
   ctx: ActionCtx,
   event: WebhookSubscriptionCreatedPayload | WebhookSubscriptionUpdatedPayload,
 ) => {
-  console.log("event", event);
   const user = await ctx.runQuery(internal.subscriptions.getPolarEventUser, {
     polarId: event.data.userId,
     email: event.data.user.email,
@@ -60,10 +59,17 @@ const handleSubscriptionChange = async (
 
   await handleUpdateSubscription(ctx, user, event);
 
-  await sendSubscriptionSuccessEmail({
-    email: user.email,
-    subscriptionId: event.data.id,
+  const freePlan = await ctx.runQuery(internal.subscriptions.getPlanByKey, {
+    key: "free",
   });
+
+  // Only send email for paid plans
+  if (event.data.productId !== freePlan?.polarProductId) {
+    await sendSubscriptionSuccessEmail({
+      email: user.email,
+      subscriptionId: event.data.id,
+    });
+  }
 
   return new Response(null);
 };
@@ -80,10 +86,17 @@ const handlePolarSubscriptionUpdatedError = async (
   });
   if (!user?.email) throw new Error("User not found");
 
-  await sendSubscriptionErrorEmail({
-    email: user.email,
-    subscriptionId: subscription.id,
+  const freePlan = await ctx.runQuery(internal.subscriptions.getPlanByKey, {
+    key: "free",
   });
+
+  // Only send email for paid plans
+  if (event.data.productId !== freePlan?.polarProductId) {
+    await sendSubscriptionErrorEmail({
+      email: user.email,
+      subscriptionId: subscription.id,
+    });
+  }
   return new Response(null);
 };
 
