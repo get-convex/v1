@@ -1,0 +1,3 @@
+{
+  "buildCommand": "cd ../../packages/backend && npx convex deploy --cmd 'cd ../../apps/app && turbo run build'"
+}
