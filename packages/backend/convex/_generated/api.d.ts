@@ -16,6 +16,8 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as auth from "../auth.js";
+import type * as email_index from "../email/index.js";
+import type * as email_templates_subscriptionEmail from "../email/templates/subscriptionEmail.js";
 import type * as http from "../http.js";
 import type * as init from "../init.js";
 import type * as posts from "../posts.js";
@@ -33,6 +35,8 @@ import type * as utils_validators from "../utils/validators.js";
  */
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  "email/index": typeof email_index;
+  "email/templates/subscriptionEmail": typeof email_templates_subscriptionEmail;
   http: typeof http;
   init: typeof init;
   posts: typeof posts;

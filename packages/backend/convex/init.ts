@@ -36,7 +36,7 @@ export const insertSeedPlan = internalMutation({
   args: schema.tables.plans.validator,
   handler: async (ctx, args) => {
     await ctx.db.insert("plans", {
-      polarId: args.polarId,
+      polarProductId: args.polarProductId,
       key: args.key,
       name: args.name,
       description: args.description,
@@ -86,7 +86,7 @@ export default internalAction(async (ctx) => {
     );
 
     await ctx.runMutation(internal.init.insertSeedPlan, {
-      polarId: polarProduct.id,
+      polarProductId: polarProduct.id,
       key: product.key as PlanKey,
       name: product.name,
       description: product.description,

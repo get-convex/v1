@@ -4,12 +4,13 @@
   "description": "",
   "scripts": {
     "dev": "convex dev --tail-logs",
-    "setup": "convex dev --until-success"
+    "dev:setup": "convex dev --run init --until-success"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "convex": "^1.13.0",
-    "openai": "^4.61.1"
+    "openai": "^4.61.1",
+    "standardwebhooks": "^1.0.0"
   }
 }

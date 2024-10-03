@@ -43,20 +43,25 @@ const pricesValidator = v.object({
 export default defineSchema({
   ...authTables,
   users: defineTable({
+    // Convex Auth fields
     name: v.optional(v.string()),
-    username: v.optional(v.string()),
-    imageId: v.optional(v.id("_storage")),
     image: v.optional(v.string()),
     email: v.optional(v.string()),
     emailVerificationTime: v.optional(v.number()),
     phone: v.optional(v.string()),
     phoneVerificationTime: v.optional(v.number()),
     isAnonymous: v.optional(v.boolean()),
-    subscriptionId: v.optional(v.id("subscriptions")),
-  }).index("email", ["email"]),
+
+    // custom fields
+    username: v.optional(v.string()),
+    imageId: v.optional(v.id("_storage")),
+    polarId: v.optional(v.string()),
+  })
+    .index("email", ["email"])
+    .index("polarId", ["polarId"]),
   plans: defineTable({
     key: planKeyValidator,
-    polarId: v.string(),
+    polarProductId: v.string(),
     name: v.string(),
     description: v.string(),
     prices: v.object({
@@ -65,19 +70,19 @@ export default defineSchema({
     }),
   })
     .index("key", ["key"])
-    .index("polarId", ["polarId"]),
+    .index("polarProductId", ["polarProductId"]),
   subscriptions: defineTable({
     userId: v.id("users"),
     planId: v.id("plans"),
-    priceStripeId: v.string(),
-    stripeId: v.string(),
+    polarId: v.string(),
+    polarPriceId: v.string(),
     currency: currencyValidator,
     interval: intervalValidator,
     status: v.string(),
-    currentPeriodStart: v.number(),
-    currentPeriodEnd: v.number(),
-    cancelAtPeriodEnd: v.boolean(),
+    currentPeriodStart: v.optional(v.number()),
+    currentPeriodEnd: v.optional(v.number()),
+    cancelAtPeriodEnd: v.optional(v.boolean()),
   })
     .index("userId", ["userId"])
-    .index("stripeId", ["stripeId"]),
+    .index("polarId", ["polarId"]),
 });

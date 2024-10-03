@@ -32,6 +32,12 @@
     "dev": {
       "inputs": ["$TURBO_DEFAULT$", ".env"],
       "persistent": true,
+      "cache": false,
+      "dependsOn": ["dev:setup"]
+    },
+    "dev:setup": {
+      "inputs": ["$TURBO_DEFAULT$", ".env"],
+      "persistent": true,
       "cache": false
     },
     "lint": {

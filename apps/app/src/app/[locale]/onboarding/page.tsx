@@ -1,13 +1,12 @@
 "use client";
 
-import { getLocaleCurrency } from "@/utils/misc";
 import { useForm } from "@tanstack/react-form";
 import { zodValidator } from "@tanstack/zod-form-adapter";
 import { api } from "@v1/backend/convex/_generated/api";
 import * as validators from "@v1/backend/convex/utils/validators";
 import { Button } from "@v1/ui/button";
 import { Input } from "@v1/ui/input";
-import { useAction, useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -15,7 +14,7 @@ import { useFormStatus } from "react-dom";
 
 export default function OnboardingUsername() {
   const user = useQuery(api.users.getUser);
-  const completeOnboarding = useAction(api.users.completeOnboarding);
+  const updateUsername = useMutation(api.users.updateUsername);
   const router = useRouter();
 
   const { pending } = useFormStatus();
@@ -26,9 +25,8 @@ export default function OnboardingUsername() {
       username: "",
     },
     onSubmit: async ({ value }) => {
-      await completeOnboarding({
+      await updateUsername({
         username: value.username,
-        currency: getLocaleCurrency(),
       });
     },
   });

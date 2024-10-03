@@ -16,9 +16,10 @@ export const getUser = query({
     if (!user) {
       return;
     }
-    const subscription = user.subscriptionId
-      ? await ctx.db.get(user.subscriptionId)
-      : undefined;
+    const subscription = await ctx.db
+      .query("subscriptions")
+      .withIndex("userId", (q) => q.eq("userId", userId))
+      .unique();
     const plan = subscription?.planId
       ? await ctx.db.get(subscription.planId)
       : undefined;
