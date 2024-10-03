@@ -176,8 +176,13 @@ export const replaceSubscription = internalMutation({
       currentPeriodEnd: args.input.currentPeriodEnd,
       cancelAtPeriodEnd: args.input.cancelAtPeriodEnd,
     });
+    const user = await ctx.db.get(args.userId);
+    if (!user?.polarSubscriptionPendingId) {
+      return;
+    }
+    await ctx.scheduler.cancel(user.polarSubscriptionPendingId);
     await ctx.db.patch(args.userId, {
-      polarSubscriptionPending: false,
+      polarSubscriptionPendingId: undefined,
     });
   },
 });
@@ -188,14 +193,14 @@ export const setSubscriptionPending = mutation({
     if (!userId) {
       throw new Error("User not found");
     }
-    await ctx.db.patch(userId, {
-      polarSubscriptionPending: true,
-    });
-    await ctx.scheduler.runAfter(
+    const scheduledFunctionId = await ctx.scheduler.runAfter(
       1000 * 30,
       internal.subscriptions.unsetSubscriptionPending,
       { userId },
     );
+    await ctx.db.patch(userId, {
+      polarSubscriptionPendingId: scheduledFunctionId,
+    });
   },
 });
 
@@ -205,7 +210,7 @@ export const unsetSubscriptionPending = internalMutation({
   },
   handler: async (ctx, args) => {
     await ctx.db.patch(args.userId, {
-      polarSubscriptionPending: false,
+      polarSubscriptionPendingId: undefined,
     });
   },
 });

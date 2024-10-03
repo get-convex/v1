@@ -56,7 +56,7 @@ export default defineSchema({
     username: v.optional(v.string()),
     imageId: v.optional(v.id("_storage")),
     polarId: v.optional(v.string()),
-    polarSubscriptionPending: v.optional(v.boolean()),
+    polarSubscriptionPendingId: v.optional(v.id("_scheduled_functions")),
   })
     .index("email", ["email"])
     .index("polarId", ["polarId"]),
