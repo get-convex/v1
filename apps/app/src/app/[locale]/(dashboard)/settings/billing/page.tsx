@@ -11,7 +11,9 @@ import { useState } from "react";
 
 export default function BillingSettings() {
   const user = useQuery(api.users.getUser);
-  const createCheckout = useAction(api.subscriptions.createCheckout);
+  const getCheckoutUrl = useAction(
+    api.subscriptions.getProOnboardingCheckoutUrl,
+  );
   const plans = useQuery(api.subscriptions.listPlans);
 
   const [selectedPlanInterval, setSelectedPlanInterval] = useState<
@@ -31,15 +33,12 @@ export default function BillingSettings() {
     if (!polarId) {
       return;
     }
-    const resp = await createCheckout({
-      productPriceId: polarId,
-    });
-    console.log("resp", resp);
-    if (!resp.url) {
+    const url = await getCheckoutUrl();
+    if (!url) {
       return;
     }
 
-    window.location.href = resp.url;
+    window.location.href = url;
   };
 
   if (!user || !plans) {
@@ -74,9 +73,9 @@ export default function BillingSettings() {
           <p className="flex items-start gap-1 text-sm font-normal text-primary/60">
             You are currently on the{" "}
             <span className="flex h-[18px] items-center rounded-md bg-primary/10 px-1.5 text-sm font-medium text-primary/80">
-              {user.subscriptionId
-                ? user.subscriptionId.charAt(0).toUpperCase() +
-                  user.subscriptionId.slice(1)
+              {user.plan?.key
+                ? user.plan?.key.charAt(0).toUpperCase() +
+                  user.plan?.key.slice(1)
                 : "Free"}
             </span>
             plan.
@@ -88,7 +87,7 @@ export default function BillingSettings() {
             {plans.map((plan) => (
               <div
                 key={plan._id}
-                className={`flex w-full select-none items-center rounded-md border border-border hover:border-primary/60 ${
+                className={`flex w-full select-none items-center rounded-md border border-border ${
                   user.subscription?.planId === plan._id && "border-primary/60"
                 }`}
               >
@@ -159,7 +158,7 @@ export default function BillingSettings() {
                     )}
                     on:{" "}
                     {new Date(
-                      user.subscription.currentPeriodEnd * 1000,
+                      user.subscription.currentPeriodEnd ?? 0 * 1000,
                     ).toLocaleDateString("en-US")}
                     .
                   </p>

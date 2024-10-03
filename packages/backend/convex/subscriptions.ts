@@ -70,12 +70,28 @@ export const getOnboardingCheckoutUrl = action({
   },
 });
 
-export const getProOnboardingCheckoutUrl = query({
+export const getProOnboardingCheckoutUrl = action({
   handler: async (ctx) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
+    const user = await ctx.runQuery(api.users.getUser);
+    if (!user) {
       throw new Error("User not found");
     }
+    const product = await ctx.runQuery(internal.subscriptions.getPlanByKey, {
+      key: "pro",
+    });
+    const price = product?.prices.month?.usd;
+    if (!price) {
+      throw new Error("Price not found");
+    }
+    if (!user.email) {
+      throw new Error("User email not found");
+    }
+    const checkout = await createCheckout({
+      customerEmail: user.email,
+      productPriceId: price.polarId,
+      successUrl: "http://localhost:3000/settings/billing",
+    });
+    return checkout.url;
   },
 });
 
