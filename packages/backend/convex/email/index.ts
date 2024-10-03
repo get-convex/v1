@@ -25,7 +25,9 @@ export type SendEmailOptions = {
 };
 
 export async function sendEmail(options: SendEmailOptions) {
-  const from = process.env.AUTH_EMAIL ?? "Convex SaaS <onboarding@resend.dev>";
+  const from =
+    process.env.RESEND_SENDER_EMAIL_AUTH ??
+    "Convex SaaS <onboarding@resend.dev>";
   const email = { from, ...options };
 
   const response = await fetch("https://api.resend.com/emails", {

@@ -1,9 +1,11 @@
 import {
   type WebhookSubscriptionCreatedPayload,
+  type WebhookSubscriptionCreatedPayload$Outbound,
   WebhookSubscriptionCreatedPayload$inboundSchema as WebhookSubscriptionCreatedPayloadSchema,
 } from "@polar-sh/sdk/models/components/webhooksubscriptioncreatedpayload";
 import {
   type WebhookSubscriptionUpdatedPayload,
+  type WebhookSubscriptionUpdatedPayload$Outbound,
   WebhookSubscriptionUpdatedPayload$inboundSchema as WebhookSubscriptionUpdatedPayloadSchema,
 } from "@polar-sh/sdk/models/components/webhooksubscriptionupdatedpayload";
 import { httpRouter } from "convex/server";
@@ -99,13 +101,12 @@ http.route({
 
     const wh = new Webhook(btoa(process.env.POLAR_WEBHOOK_SECRET!));
     const body = await request.text();
-    const payload = wh.verify(
+    const event = wh.verify(
       body,
       Object.fromEntries(request.headers.entries()),
-    );
-    const event = payload as
-      | WebhookSubscriptionCreatedPayload
-      | WebhookSubscriptionUpdatedPayload;
+    ) as
+      | WebhookSubscriptionCreatedPayload$Outbound
+      | WebhookSubscriptionUpdatedPayload$Outbound;
 
     try {
       switch (event.type) {
@@ -124,17 +125,26 @@ http.route({
          * E.g. when a user upgrades or downgrades their plan.
          */
         case "subscription.updated": {
-          return handleSubscriptionChange(ctx, event);
+          return handleSubscriptionChange(
+            ctx,
+            WebhookSubscriptionUpdatedPayloadSchema.parse(event),
+          );
         }
       }
     } catch (err: unknown) {
       switch (event.type) {
         case "subscription.created": {
-          return handlePolarSubscriptionUpdatedError(ctx, event);
+          return handlePolarSubscriptionUpdatedError(
+            ctx,
+            WebhookSubscriptionCreatedPayloadSchema.parse(event),
+          );
         }
 
         case "subscription.updated": {
-          return handlePolarSubscriptionUpdatedError(ctx, event);
+          return handlePolarSubscriptionUpdatedError(
+            ctx,
+            WebhookSubscriptionUpdatedPayloadSchema.parse(event),
+          );
         }
       }
 
