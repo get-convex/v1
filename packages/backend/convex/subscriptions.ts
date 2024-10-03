@@ -16,10 +16,12 @@ const createCheckout = async ({
   customerEmail,
   productPriceId,
   successUrl,
+  subscriptionId,
 }: {
   customerEmail: string;
   productPriceId: string;
   successUrl: string;
+  subscriptionId?: string;
 }) => {
   const polar = new Polar({
     server: "sandbox",
@@ -29,6 +31,7 @@ const createCheckout = async ({
     productPriceId,
     successUrl,
     customerEmail,
+    subscriptionId,
   });
   return result;
 };
@@ -77,9 +80,12 @@ export const getProOnboardingCheckoutUrl = action({
       throw new Error("User not found");
     }
     const product = await ctx.runQuery(internal.subscriptions.getPlanByKey, {
-      key: "pro",
+      key: user.plan?.key ?? "free",
     });
-    const price = product?.prices.month?.usd;
+    const price =
+      user.subscription?.interval === "month"
+        ? product?.prices.month?.usd
+        : product?.prices.year?.usd;
     if (!price) {
       throw new Error("Price not found");
     }
@@ -90,6 +96,7 @@ export const getProOnboardingCheckoutUrl = action({
       customerEmail: user.email,
       productPriceId: price.polarId,
       successUrl: "http://localhost:3000/settings/billing",
+      subscriptionId: user.subscription?.polarId,
     });
     return checkout.url;
   },

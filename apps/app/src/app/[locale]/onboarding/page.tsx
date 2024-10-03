@@ -35,10 +35,28 @@ export default function OnboardingUsername() {
     if (!user) {
       return;
     }
-    if (user?.username) {
+    if (user?.username && !user?.polarSubscriptionPendingId) {
       router.push("/");
     }
-  }, [user?.username]);
+  }, [user?.username, user?.polarSubscriptionPendingId]);
+
+  if (!user) {
+    return null;
+  }
+
+  const showSubscriptionPending =
+    user.username && (user.polarSubscriptionPendingId || user.subscription);
+
+  if (showSubscriptionPending) {
+    return (
+      <div className="flex h-screen w-screen flex-col items-center justify-center gap-4">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-center text-base font-normal text-primary/60">
+          Processing your subscription. This may take a moment...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto flex h-full w-full max-w-96 flex-col items-center justify-center gap-6">
