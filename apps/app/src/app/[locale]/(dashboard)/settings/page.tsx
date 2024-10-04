@@ -41,7 +41,8 @@ export default function DashboardSettings() {
   const handleDeleteAccount = async () => {
     console.log(user?.subscription);
     if (
-      user?.subscription?.status === "active" &&
+      user?.subscription?.status &&
+      ["active", "incomplete"].includes(user.subscription.status) &&
       !user.subscription.cancelAtPeriodEnd
     ) {
       setIsUnsubscribeModalOpen(true);

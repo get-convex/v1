@@ -4,8 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
-    "convex": "convex dev",
-    "dev:all": "concurrently \"npm run dev\" \"npm run convex\"",
     "build": "next build",
     "clean": "git clean -xdf .next .turbo node_modules",
     "lint": "biome lint",

@@ -221,7 +221,7 @@ export const setSubscriptionPending = mutation({
       throw new Error("User not found");
     }
     const scheduledFunctionId = await ctx.scheduler.runAfter(
-      1000 * 30,
+      1000 * 120,
       internal.subscriptions.unsetSubscriptionPending,
       { userId },
     );

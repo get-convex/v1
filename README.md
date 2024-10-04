@@ -90,6 +90,7 @@ bun i
 # Copy .env.example to .env for each app
 cp apps/app/.env.example apps/app/.env
 cp apps/web/.env.example apps/web/.env
+cp packages/backend/.env.example packages/backend/.env
 ```
 
 4. Start the development server from either bun or turbo:
@@ -98,5 +99,6 @@ cp apps/web/.env.example apps/web/.env
 bun dev // starts everything in development mode (web, app, api, email)
 bun dev:web // starts the web app in development mode
 bun dev:app // starts the app in development mode
+bun dev:convex // starts the convex api in development mode
 bun dev:email // starts the email app in development mode
 ```
