@@ -108,7 +108,8 @@ export const listPlans = query({
     if (!userId) {
       throw new Error("User not found");
     }
-    return ctx.db.query("plans").collect();
+    const plans = await ctx.db.query("plans").collect();
+    return plans.sort((a, b) => a.key.localeCompare(b.key));
   },
 });
 

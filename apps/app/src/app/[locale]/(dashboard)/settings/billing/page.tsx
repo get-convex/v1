@@ -11,7 +11,7 @@ import { useState } from "react";
 
 export default function BillingSettings() {
   const user = useQuery(api.users.getUser);
-  const getCheckoutUrl = useAction(
+  const getUpgradeCheckoutUrl = useAction(
     api.subscriptions.getProOnboardingCheckoutUrl,
   );
   const plans = useQuery(api.subscriptions.listPlans);
@@ -25,15 +25,16 @@ export default function BillingSettings() {
   const freePlan = plans?.find((plan) => plan.key === PLANS.FREE);
   const proPlan = plans?.find((plan) => plan.key === PLANS.PRO);
 
-  const handleCreateSubscriptionCheckout = async () => {
+  const handleUpgradeCheckout = async () => {
     if (!user || !proPlan) {
       return;
     }
-    const polarId = proPlan.prices[selectedPlanInterval]?.[currency]?.polarId;
-    if (!polarId) {
+    const polarPriceId =
+      proPlan.prices[selectedPlanInterval]?.[currency]?.polarId;
+    if (!polarPriceId) {
       return;
     }
-    const url = await getCheckoutUrl();
+    const url = await getUpgradeCheckoutUrl();
     if (!url) {
       return;
     }
@@ -176,11 +177,7 @@ export default function BillingSettings() {
             You will not be charged for testing the subscription upgrade.
           </p>
           {user.subscription?.planId === freePlan?._id && (
-            <Button
-              type="submit"
-              size="sm"
-              onClick={handleCreateSubscriptionCheckout}
-            >
+            <Button type="submit" size="sm" onClick={handleUpgradeCheckout}>
               Upgrade to PRO
             </Button>
           )}
@@ -202,13 +199,16 @@ export default function BillingSettings() {
           <p className="text-sm font-normal text-primary/60">
             You will be redirected to the Stripe Customer Portal.
           </p>
-          <Button
-            type="submit"
-            size="sm"
-            onClick={handleCreateSubscriptionCheckout}
+
+          <a
+            href={`https://sandbox.polar.sh/purchases/subscriptions/${user.subscription?.polarId}`}
+            target="_blank"
+            rel="noreferrer"
           >
-            Manage
-          </Button>
+            <Button type="submit" size="sm">
+              Manage
+            </Button>
+          </a>
         </div>
       </div>
     </div>
