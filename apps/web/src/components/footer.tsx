@@ -6,7 +6,7 @@ export function Footer() {
       <div className="relative flex overflow-x-hidden space-x-6">
         <div className="flex items-center space-x-6 animate-marquee whitespace-nowrap lg:animate-none">
           <a
-            href="https://convex.dev"
+            href="https://convex.dev/c/middayv1template"
             target="_blank"
             rel="noopener noreferrer"
           >

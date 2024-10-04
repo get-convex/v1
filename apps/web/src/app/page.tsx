@@ -24,7 +24,7 @@ export default function Page() {
           Midday
         </a>
         . Now on{" "}
-        <a href="https://convex.dev" className="underline">
+        <a href="https://convex.dev/c/middayv1template" className="underline">
           Convex
         </a>
         .
