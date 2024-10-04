@@ -32,7 +32,15 @@ export function Header() {
         <ul className="flex items-center gap-4">
           <li>
             <a
-              href="https://github.com/midday-ai/v1"
+              href="https://convex-v1-app.vercel.app"
+              className="text-sm px-4 py-2 bg-primary text-secondary rounded-full font-medium"
+            >
+              Sign in
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://github.com/get-convex/convex-v1"
               className="text-sm px-4 py-2 bg-primary text-secondary rounded-full font-medium"
             >
               Github
