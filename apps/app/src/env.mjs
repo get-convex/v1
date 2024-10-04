@@ -9,20 +9,17 @@ export const env = createEnv({
       .transform((v) => (v ? `https://${v}` : undefined)),
     PORT: z.coerce.number().default(3000),
   },
-  server: {
-    OPENPANEL_SECRET_KEY: z.string(),
-    RESEND_API_KEY: z.string(),
-  },
   client: {
+    NEXT_PUBLIC_CONVEX_URL: z.string(),
     NEXT_PUBLIC_OPENPANEL_CLIENT_ID: z.string(),
+    NEXT_PUBLIC_SENTRY_DSN: z.string(),
   },
   runtimeEnv: {
+    NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
     NEXT_PUBLIC_OPENPANEL_CLIENT_ID:
       process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID,
     NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
-    OPENPANEL_SECRET_KEY: process.env.OPENPANEL_SECRET_KEY,
     PORT: process.env.PORT,
-    RESEND_API_KEY: process.env.RESEND_API_KEY,
     VERCEL_URL: process.env.VERCEL_URL,
   },
   skipValidation: !!process.env.CI || !!process.env.SKIP_ENV_VALIDATION,

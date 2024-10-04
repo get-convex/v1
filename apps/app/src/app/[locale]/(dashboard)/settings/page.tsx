@@ -23,6 +23,9 @@ export default function DashboardSettings() {
   const updateUsername = useMutation(api.users.updateUsername);
   const removeUserImage = useMutation(api.users.removeUserImage);
   const generateUploadUrl = useMutation(api.users.generateUploadUrl);
+  const deleteCurrentUserAccount = useMutation(
+    api.users.deleteCurrentUserAccount,
+  );
   const handleUpdateUserImage = (uploaded: UploadFileResponse[]) => {
     return updateUserImage({
       imageId: (uploaded[0]?.response as { storageId: Id<"_storage"> })
@@ -32,7 +35,7 @@ export default function DashboardSettings() {
   const { doubleCheck, getButtonProps } = useDoubleCheck();
 
   const handleDeleteAccount = async () => {
-    // TODO: Implement delete account
+    await deleteCurrentUserAccount({});
     signOut();
   };
 

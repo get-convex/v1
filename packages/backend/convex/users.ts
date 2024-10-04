@@ -1,4 +1,5 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { asyncMap } from "convex-helpers";
 import { v } from "convex/values";
 import { z } from "zod";
 import { api } from "./_generated/api";
@@ -92,5 +93,41 @@ export const removeUserImage = mutation({
       return;
     }
     ctx.db.patch(userId, { imageId: undefined, image: undefined });
+  },
+});
+
+export const deleteCurrentUserAccount = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      return;
+    }
+    const user = await ctx.db.get(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const subscription = await ctx.db
+      .query("subscriptions")
+      .withIndex("userId", (q) => q.eq("userId", userId))
+      .unique();
+    if (!subscription) {
+      console.error("No subscription found");
+    } else {
+      await ctx.db.delete(subscription._id);
+    }
+    await ctx.db.delete(userId);
+    await asyncMap(["resend-otp", "github"], async (provider) => {
+      const authAccount = await ctx.db
+        .query("authAccounts")
+        .withIndex("userIdAndProvider", (q) =>
+          q.eq("userId", userId).eq("provider", provider),
+        )
+        .unique();
+      if (!authAccount) {
+        return;
+      }
+      await ctx.db.delete(authAccount._id);
+    });
   },
 });
