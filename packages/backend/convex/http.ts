@@ -11,6 +11,7 @@ import {
 import { httpRouter } from "convex/server";
 import { Webhook } from "standardwebhooks";
 import { z } from "zod";
+import env from "../env";
 import { internal } from "./_generated/api";
 import type { Doc } from "./_generated/dataModel";
 import { type ActionCtx, httpAction } from "./_generated/server";
@@ -112,7 +113,7 @@ http.route({
       return new Response(null, { status: 400 });
     }
 
-    const wh = new Webhook(btoa(process.env.POLAR_WEBHOOK_SECRET!));
+    const wh = new Webhook(btoa(env.POLAR_WEBHOOK_SECRET));
     const body = await request.text();
     const event = wh.verify(
       body,

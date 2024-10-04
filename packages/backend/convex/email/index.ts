@@ -1,4 +1,5 @@
 import { z } from "zod";
+import env from "../../env";
 
 const ResendSuccessSchema = z.object({
   id: z.string(),
@@ -26,14 +27,13 @@ export type SendEmailOptions = {
 
 export async function sendEmail(options: SendEmailOptions) {
   const from =
-    process.env.RESEND_SENDER_EMAIL_AUTH ??
-    "Convex SaaS <onboarding@resend.dev>";
+    env.RESEND_SENDER_EMAIL_AUTH ?? "Convex SaaS <onboarding@resend.dev>";
   const email = { from, ...options };
 
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      Authorization: `Bearer ${env.RESEND_API_KEY}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(email),

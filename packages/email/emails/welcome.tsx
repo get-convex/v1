@@ -11,7 +11,6 @@ import {
   Section,
   Tailwind,
 } from "@react-email/components";
-import { Logo } from "components/logo";
 
 const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`

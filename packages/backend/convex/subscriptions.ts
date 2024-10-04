@@ -1,6 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Polar } from "@polar-sh/sdk";
 import { v } from "convex/values";
+import env from "../env";
 import { api, internal } from "./_generated/api";
 import {
   action,
@@ -24,7 +25,7 @@ const createCheckout = async ({
 }) => {
   const polar = new Polar({
     server: "sandbox",
-    accessToken: process.env.POLAR_ACCESS_TOKEN ?? "",
+    accessToken: env.POLAR_ACCESS_TOKEN,
   });
   const result = await polar.checkouts.create({
     productPriceId,
@@ -66,7 +67,7 @@ export const getOnboardingCheckoutUrl = action({
     const checkout = await createCheckout({
       customerEmail: user.email,
       productPriceId: price.polarId,
-      successUrl: "http://localhost:3000/settings/billing",
+      successUrl: `${env.SITE_URL}/settings/billing`,
     });
     return checkout.url;
   },
@@ -94,7 +95,7 @@ export const getProOnboardingCheckoutUrl = action({
     const checkout = await createCheckout({
       customerEmail: user.email,
       productPriceId: price.polarId,
-      successUrl: "http://localhost:3000/settings/billing",
+      successUrl: `${env.SITE_URL}/settings/billing`,
       subscriptionId: user.subscription?.polarId,
     });
     return checkout.url;

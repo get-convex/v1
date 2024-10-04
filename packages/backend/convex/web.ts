@@ -1,4 +1,5 @@
 import { v } from "convex/values";
+import env from "../env";
 import { action } from "./_generated/server";
 
 export const subscribe = action({
@@ -8,7 +9,7 @@ export const subscribe = action({
   },
   handler: async (ctx, args) => {
     const res = await fetch(
-      `https://app.loops.so/api/newsletter-form/${process.env.NEXT_PUBLIC_LOOPS_FORM_ID}`,
+      `https://app.loops.so/api/newsletter-form/${env.LOOPS_FORM_ID}`,
       {
         method: "POST",
         headers: {

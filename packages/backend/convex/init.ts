@@ -1,5 +1,6 @@
 import { Polar } from "@polar-sh/sdk";
 import { asyncMap } from "convex-helpers";
+import env from "../env";
 import { internal } from "./_generated/api";
 import { internalAction, internalMutation } from "./_generated/server";
 import schema, { CURRENCIES, INTERVALS, type PlanKey, PLANS } from "./schema";
@@ -51,10 +52,10 @@ export default internalAction(async (ctx) => {
    */
   const polar = new Polar({
     server: "sandbox",
-    accessToken: process.env.POLAR_ACCESS_TOKEN ?? "",
+    accessToken: env.POLAR_ACCESS_TOKEN,
   });
   const products = await polar.products.list({
-    organizationId: process.env.POLAR_ORGANIZATION_ID!,
+    organizationId: env.POLAR_ORGANIZATION_ID,
     isArchived: false,
   });
   if (products?.result?.items?.length) {
@@ -65,7 +66,7 @@ export default internalAction(async (ctx) => {
   await asyncMap(seedProducts, async (product) => {
     // Create Polar product.
     const polarProduct = await polar.products.create({
-      organizationId: process.env.POLAR_ORGANIZATION_ID!,
+      organizationId: env.POLAR_ORGANIZATION_ID,
       name: product.name,
       description: product.description,
       prices: Object.entries(product.prices).map(([interval, amount]) => ({
