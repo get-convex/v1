@@ -40,7 +40,7 @@ export function Header() {
           </li>
           <li>
             <a
-              href="https://github.com/get-convex/convex-v1"
+              href="https://github.com/get-convex/v1"
               className="text-sm px-4 py-2 bg-primary text-secondary rounded-full font-medium"
             >
               Github
