@@ -74,16 +74,19 @@ export const getOnboardingCheckoutUrl = action({
 });
 
 export const getProOnboardingCheckoutUrl = action({
-  handler: async (ctx) => {
+  args: {
+    interval: schema.tables.subscriptions.validator.fields.interval,
+  },
+  handler: async (ctx, args) => {
     const user = await ctx.runQuery(api.users.getUser);
     if (!user) {
       throw new Error("User not found");
     }
     const product = await ctx.runQuery(internal.subscriptions.getPlanByKey, {
-      key: user.plan?.key ?? "free",
+      key: "pro",
     });
     const price =
-      user.subscription?.interval === "month"
+      args.interval === "month"
         ? product?.prices.month?.usd
         : product?.prices.year?.usd;
     if (!price) {

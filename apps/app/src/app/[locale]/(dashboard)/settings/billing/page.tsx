@@ -26,19 +26,10 @@ export default function BillingSettings() {
   const proPlan = plans?.find((plan) => plan.key === PLANS.PRO);
 
   const handleUpgradeCheckout = async () => {
-    if (!user || !proPlan) {
-      return;
-    }
-    const polarPriceId =
-      proPlan.prices[selectedPlanInterval]?.[currency]?.polarId;
-    if (!polarPriceId) {
-      return;
-    }
-    const url = await getUpgradeCheckoutUrl();
+    const url = await getUpgradeCheckoutUrl({ interval: selectedPlanInterval });
     if (!url) {
       return;
     }
-
     window.location.href = url;
   };
 
