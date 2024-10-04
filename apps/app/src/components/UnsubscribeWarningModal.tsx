@@ -11,13 +11,13 @@ import {
 interface UnsubscribeWarningModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onUnsubscribe: () => void;
+  unsubscribeHref: string;
 }
 
 export function UnsubscribeWarningModal({
   isOpen,
   onClose,
-  onUnsubscribe,
+  unsubscribeHref,
 }: UnsubscribeWarningModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -33,7 +33,9 @@ export function UnsubscribeWarningModal({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={onUnsubscribe}>Go to Unsubscribe Page</Button>
+          <a href={unsubscribeHref} target="_blank" rel="noopener noreferrer">
+            <Button>Go to Unsubscribe Page</Button>
+          </a>
         </DialogFooter>
       </DialogContent>
     </Dialog>

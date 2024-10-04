@@ -51,10 +51,7 @@ export default function DashboardSettings() {
     }
   };
 
-  const handleUnsubscribe = () => {
-    // Redirect to Polar unsubscribe page
-    window.location.href = `https://sandbox.polar.sh/purchases/subscriptions/${user?.subscription?.polarId}`;
-  };
+  const unsubscribeHref = `https://sandbox.polar.sh/purchases/subscriptions/${user?.subscription?.polarId}`;
 
   const usernameForm = useForm({
     validatorAdapter: zodValidator(),
@@ -214,7 +211,7 @@ export default function DashboardSettings() {
       <UnsubscribeWarningModal
         isOpen={isUnsubscribeModalOpen}
         onClose={() => setIsUnsubscribeModalOpen(false)}
-        onUnsubscribe={handleUnsubscribe}
+        unsubscribeHref={unsubscribeHref}
       />
     </div>
   );
