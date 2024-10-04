@@ -43,7 +43,7 @@ export default function Page() {
         <Tooltip>
           <TooltipTrigger asChild>
             <a
-              href="https://convex-v1-app.vercel.app"
+              href="https://v1-convex-app.vercel.app"
               target="_blank"
               rel="noreferrer"
             >

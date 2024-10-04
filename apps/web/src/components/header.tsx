@@ -32,7 +32,7 @@ export function Header() {
         <ul className="flex items-center gap-4">
           <li>
             <a
-              href="https://convex-v1-app.vercel.app"
+              href="https://v1-convex-app.vercel.app"
               className="text-sm px-4 py-2 bg-primary text-secondary rounded-full font-medium"
             >
               Sign in
