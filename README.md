@@ -4,11 +4,11 @@
 <p align="center">
 	<h1 align="center"><b>Create v1</b></h1>
 <p align="center">
-    An open-source starter kit based on an <a href="https://v1.run">open-source starter kit</a> by <a href="https://midday.ai">Midday</a>.
+    An open-source starter kit based on an <a href="https://v1.run">open-source starter kit</a> by <a href="https://midday.ai">Midday</a>. Ported to <a href="https://convex.dev">Convex</a>.
     <br />
     <br />
-    <a href="https://v1-convex.vercel.app"><strong>Website</strong></a> · 
-    <a href="https://github.com/get-convex/v1-convex/issues"><strong>Issues</strong></a> · 
+    <a href="https://v1-convex.vercel.app"><strong>Website</strong></a> ·
+    <a href="https://github.com/get-convex/v1-convex/issues"><strong>Issues</strong></a> ·
     <a href="#whats-included"><strong>What's included</strong></a> ·
     <a href="#prerequisites"><strong>Prerequisites</strong></a> ·
     <a href="#getting-started"><strong>Getting Started</strong></a> ·

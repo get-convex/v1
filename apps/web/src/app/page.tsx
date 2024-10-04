@@ -6,6 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@v1/ui/tooltip";
+import Image from "next/image";
 
 export default function Page() {
   return (
@@ -17,10 +18,14 @@ export default function Page() {
         <AnimatedText text="Production ready code" />
       </h1>
 
-      <p className="relative z-10 text-center max-w-[80%] mt-0 md:mt-4">
+      <p className="relative z-10 text-center text-xl max-w-[80%] mt-0 md:mt-4">
         An open-source starter kit based on{" "}
         <a href="https://midday.ai?utm_source=v1" className="underline">
           Midday
+        </a>
+        . Now on{" "}
+        <a href="https://convex.dev" className="underline">
+          Convex
         </a>
         .
       </p>
@@ -43,30 +48,12 @@ export default function Page() {
               rel="noreferrer"
             >
               <div className="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={16}
-                  height={16}
-                  fill="none"
-                >
-                  <g clipPath="url(#a)">
-                    <path
-                      fill="#F60"
-                      d="M0 0v16h16V0H0Zm8.7 9.225v3.925H7.275V9.225L3.775 2.3h1.65L8 7.525 10.65 2.3h1.55L8.7 9.225Z"
-                    />
-                  </g>
-                  <defs>
-                    <clipPath id="a">
-                      <path fill="#fff" d="M0 0h16v16H0z" />
-                    </clipPath>
-                  </defs>
-                </svg>
-                <span className="text-sm">Live on Hacker News</span>
+                <span className="text-sm">Get started →</span>
               </div>
             </a>
           </TooltipTrigger>
           <TooltipContent side="bottom" sideOffset={15} className="text-xs">
-            Show HN: V1 – An open-source starter kit for your next project
+            Log in to the example dashboard
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
