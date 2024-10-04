@@ -11,7 +11,7 @@ import {
 } from "@react-email/components";
 /* eslint-disable react-refresh/only-export-components */
 import { render } from "@react-email/render";
-import env from "../../../env";
+import { env } from "~/env";
 import { sendEmail } from "../index";
 
 type SubscriptionEmailOptions = {
