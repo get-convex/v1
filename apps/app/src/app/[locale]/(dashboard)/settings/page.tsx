@@ -1,5 +1,6 @@
 "use client";
 
+import { UnsubscribeWarningModal } from "@/components/UnsubscribeWarningModal";
 import { useScopedI18n } from "@/locales/client";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useForm } from "@tanstack/react-form";
@@ -14,6 +15,7 @@ import { useDoubleCheck } from "@v1/ui/utils";
 import type { UploadFileResponse } from "@xixixao/uploadstuff/react";
 import { useMutation, useQuery } from "convex/react";
 import { Upload } from "lucide-react";
+import { useState } from "react";
 
 export default function DashboardSettings() {
   const t = useScopedI18n("settings");
@@ -26,17 +28,32 @@ export default function DashboardSettings() {
   const deleteCurrentUserAccount = useMutation(
     api.users.deleteCurrentUserAccount,
   );
+  const { doubleCheck, getButtonProps } = useDoubleCheck();
+  const [isUnsubscribeModalOpen, setIsUnsubscribeModalOpen] = useState(false);
+
   const handleUpdateUserImage = (uploaded: UploadFileResponse[]) => {
     return updateUserImage({
       imageId: (uploaded[0]?.response as { storageId: Id<"_storage"> })
         .storageId,
     });
   };
-  const { doubleCheck, getButtonProps } = useDoubleCheck();
 
   const handleDeleteAccount = async () => {
-    await deleteCurrentUserAccount({});
-    signOut();
+    console.log(user?.subscription);
+    if (
+      user?.subscription?.status === "active" &&
+      !user.subscription.cancelAtPeriodEnd
+    ) {
+      setIsUnsubscribeModalOpen(true);
+    } else {
+      await deleteCurrentUserAccount({});
+      signOut();
+    }
+  };
+
+  const handleUnsubscribe = () => {
+    // Redirect to Polar unsubscribe page
+    window.location.href = `https://sandbox.polar.sh/purchases/subscriptions/${user?.subscription?.polarId}`;
   };
 
   const usernameForm = useForm({
@@ -193,6 +210,12 @@ export default function DashboardSettings() {
           </Button>
         </div>
       </div>
+
+      <UnsubscribeWarningModal
+        isOpen={isUnsubscribeModalOpen}
+        onClose={() => setIsUnsubscribeModalOpen(false)}
+        onUnsubscribe={handleUnsubscribe}
+      />
     </div>
   );
 }

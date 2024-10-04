@@ -2,14 +2,11 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { asyncMap } from "convex-helpers";
 import { v } from "convex/values";
 import { z } from "zod";
-import { api } from "./_generated/api";
-import { type MutationCtx, action, mutation, query } from "./_generated/server";
-import { currencyValidator } from "./schema";
+import { mutation, query } from "./_generated/server";
 
 export const getUser = query({
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    console.log("userId", userId);
     if (!userId) {
       return;
     }
@@ -116,18 +113,21 @@ export const deleteCurrentUserAccount = mutation({
     } else {
       await ctx.db.delete(subscription._id);
     }
+    await asyncMap(
+      ["google" /* add other providers as needed */],
+      async (provider) => {
+        const authAccount = await ctx.db
+          .query("authAccounts")
+          .withIndex("userIdAndProvider", (q) =>
+            q.eq("userId", userId).eq("provider", provider),
+          )
+          .unique();
+        if (!authAccount) {
+          return;
+        }
+        await ctx.db.delete(authAccount._id);
+      },
+    );
     await ctx.db.delete(userId);
-    await asyncMap(["resend-otp", "github"], async (provider) => {
-      const authAccount = await ctx.db
-        .query("authAccounts")
-        .withIndex("userIdAndProvider", (q) =>
-          q.eq("userId", userId).eq("provider", provider),
-        )
-        .unique();
-      if (!authAccount) {
-        return;
-      }
-      await ctx.db.delete(authAccount._id);
-    });
   },
 });
