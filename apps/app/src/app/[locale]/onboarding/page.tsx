@@ -35,17 +35,16 @@ export default function OnboardingUsername() {
     if (!user) {
       return;
     }
-    if (user?.username && !user?.polarSubscriptionPendingId) {
+    if (user?.username && user?.subscription) {
       router.push("/");
     }
-  }, [user?.username, user?.polarSubscriptionPendingId]);
+  }, [user]);
 
   if (!user) {
     return null;
   }
 
-  const showSubscriptionPending =
-    user.username && (user.polarSubscriptionPendingId || user.subscription);
+  const showSubscriptionPending = !!user.username;
 
   if (showSubscriptionPending) {
     return (
