@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { env } from "~/env";
+import { env } from "../env";
 
 const ResendSuccessSchema = z.object({
   id: z.string(),

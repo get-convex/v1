@@ -10,7 +10,6 @@ import {
 } from "@polar-sh/sdk/models/components/webhooksubscriptionupdatedpayload";
 import { httpRouter } from "convex/server";
 import { Webhook } from "standardwebhooks";
-import { env } from "~/env";
 import { internal } from "./_generated/api";
 import type { Doc } from "./_generated/dataModel";
 import { type ActionCtx, httpAction } from "./_generated/server";
@@ -19,6 +18,7 @@ import {
   sendSubscriptionErrorEmail,
   sendSubscriptionSuccessEmail,
 } from "./email/templates/subscriptionEmail";
+import { env } from "./env";
 
 const handleUpdateSubscription = async (
   ctx: ActionCtx,

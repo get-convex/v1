@@ -1,6 +1,6 @@
 import { v } from "convex/values";
-import { env } from "~/env";
 import { action } from "./_generated/server";
+import { env } from "./env";
 
 export const subscribe = action({
   args: {

@@ -1,7 +1,6 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Polar } from "@polar-sh/sdk";
 import { v } from "convex/values";
-import { env } from "~/env";
 import { api, internal } from "./_generated/api";
 import {
   action,
@@ -10,6 +9,7 @@ import {
   mutation,
   query,
 } from "./_generated/server";
+import { env } from "./env";
 import schema from "./schema";
 
 const createCheckout = async ({

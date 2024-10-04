@@ -1,8 +1,8 @@
 import { Polar } from "@polar-sh/sdk";
 import { asyncMap } from "convex-helpers";
-import { env } from "~/env";
 import { internal } from "./_generated/api";
 import { internalAction, internalMutation } from "./_generated/server";
+import { env } from "./env";
 import schema, { CURRENCIES, INTERVALS, type PlanKey, PLANS } from "./schema";
 
 const seedProducts = [
