@@ -1,5 +1,24 @@
 {
   "introMessage": "Welcome to the environment setup wizard for Create v1. This will guide you through setting up various services and adding the necessary environment variables.",
+  "projects": [
+    {
+      "id": "convex",
+      "exportCommand": "npx convex env set {{name}} {{value}}",
+      "importCommand": "npx convex env get {{name}}"
+    },
+    {
+      "id": "web",
+      "envFile": "apps/web/.env"
+    },
+    {
+      "id": "app",
+      "envFile": "apps/app/.env"
+    },
+    {
+      "id": "backend",
+      "envFile": "packages/backend/.env"
+    }
+  ],
   "steps": [
     {
       "title": "Convex",
@@ -7,7 +26,7 @@
       "variables": [
         {
           "name": "NEXT_PUBLIC_CONVEX_URL",
-          "envFiles": ["apps/web/.env", "apps/app/.env"],
+          "projects": ["web", "app"],
           "details": "You can find your Convex DeploymentURL in the Convex dashboard under 'Settings' > 'URL & Deploy Key'. It should look like 'https://example-123.convex.cloud'.",
           "template": "{{convexUrl}}",
           "defaultValue": "https://example-123.convex.cloud"
@@ -20,12 +39,12 @@
       "variables": [
         {
           "name": "OPENPANEL_SECRET_KEY",
-          "envFiles": ["apps/app/.env"],
+          "projects": ["app"],
           "details": "In the OpenPanel dashboard under 'Settings' > 'Projects', you have to create a new client for one of your projects to get a secret key, if you don't already have one. It starts with 'sec_'."
         },
         {
           "name": "NEXT_PUBLIC_OPENPANEL_CLIENT_ID",
-          "envFiles": ["apps/web/.env", "apps/app/.env"],
+          "projects": ["web", "app"],
           "details": "The client ID is on the same page as the secret key, under 'Settings' > 'Projects'."
         }
       ]
@@ -36,22 +55,22 @@
       "variables": [
         {
           "name": "SENTRY_ORG",
-          "envFiles": ["apps/app/.env"],
+          "projects": ["app"],
           "details": "Your Sentry organization slug, found under 'Settings' > 'Organization - General Settings'. It's also the subdomain of your Sentry URL."
         },
         {
           "name": "SENTRY_AUTH_TOKEN",
-          "envFiles": ["apps/app/.env"],
+          "projects": ["app"],
           "details": "Generate an auth token in the Sentry dashboard under 'Settings' > 'Auth Tokens'."
         },
         {
           "name": "SENTRY_PROJECT",
-          "envFiles": ["apps/app/.env"],
+          "projects": ["app"],
           "details": "Your Sentry project ID, found under 'Settings' > 'Projects' > [Your Project] > 'Project Details'."
         },
         {
           "name": "NEXT_PUBLIC_SENTRY_DSN",
-          "envFiles": ["apps/app/.env"],
+          "projects": ["app"],
           "details": "You can find your Sentry DSN in the Sentry dashboard under 'Settings' > 'Projects' > [Your Project] > 'Client Keys (DSN)'. It should look like 'https://examplePublicKey@o0.ingest.sentry.io/0'."
         }
       ]
@@ -62,12 +81,12 @@
       "variables": [
         {
           "name": "RESEND_API_KEY",
-          "envFiles": ["packages/backend/.env"],
+          "projects": ["backend"],
           "details": "Find your API key in the Resend dashboard under 'API Keys'. It starts with 're_'."
         },
         {
           "name": "RESEND_SENDER_EMAIL_AUTH",
-          "envFiles": ["packages/backend/.env"],
+          "projects": ["backend"],
           "details": "This should be the email address you want to use as the sender for authentication emails. Make sure it's verified in your Resend account under 'Domains'. If not provided, you'll only be able to send emails to the address on your Resend account.",
           "required": false
         }
@@ -79,17 +98,17 @@
       "variables": [
         {
           "name": "POLAR_ORGANIZATION_ID",
-          "envFiles": ["packages/backend/.env"],
+          "projects": ["backend"],
           "details": "Find your Organization ID in the Polar dashboard under 'Settings'."
         },
         {
           "name": "POLAR_ACCESS_TOKEN",
-          "envFiles": ["packages/backend/.env"],
+          "projects": ["backend"],
           "details": "Generate a personal access token in the Polar dashboard under 'Account' > 'Developer settings'. Required permissions: 'products:read', 'products:write', 'subscriptions:read'."
         },
         {
           "name": "POLAR_WEBHOOK_SECRET",
-          "envFiles": ["packages/backend/.env"],
+          "projects": ["backend"],
           "details": "Create a webhook in the Polar dashboard under 'Settings' > 'Webhooks'. The secret will be provided when you create the webhook. The webhook should point to the HTTP Actions URL of your Convex deployment with the path '/events/polar', it should look like 'https://your-convex-deployment.convex.site/events/polar'. You can find your Convex deployment's HTTP Actions URL under 'Settings' > 'URL & Deploy Key'. The payload format should be 'Raw'. You can provide your own secret or use the 'Generate' option. Events to select are subscription.created and subscription.updated."
         }
       ],
@@ -103,7 +122,7 @@
       "variables": [
         {
           "name": "NEXT_PUBLIC_CAL_LINK",
-          "envFiles": ["apps/web/.env"],
+          "projects": ["web"],
           "details": "This is your public Cal.com link. It should look like 'https://cal.com/yourusername' or your custom domain if you've set one up.",
           "required": false
         }
@@ -115,13 +134,13 @@
       "variables": [
         {
           "name": "NEXT_PUBLIC_DUB_URL",
-          "envFiles": ["apps/app/.env"],
+          "projects": ["app"],
           "details": "Your Dub project URL, typically in the format 'https://your-project.dub.sh'.",
           "required": false
         },
         {
           "name": "DUB_API_KEY",
-          "envFiles": ["apps/app/.env"],
+          "projects": ["app"],
           "details": "Your Dub API key, found in your Dub dashboard under API settings.",
           "required": false
         }
@@ -133,7 +152,7 @@
       "variables": [
         {
           "name": "LOOPS_FORM_ID",
-          "envFiles": ["packages/backend/.env"],
+          "projects": ["backend"],
           "details": "The ID of the Loops form you want to use, found in the Loops dashboard when viewing your form settings.",
           "required": false
         }
@@ -145,12 +164,12 @@
       "variables": [
         {
           "name": "AUTH_GOOGLE_ID",
-          "envFiles": ["packages/backend/.env"],
+          "projects": ["backend"],
           "details": "The client ID from your Google OAuth 2.0 credentials. You can find this in the Google Cloud Console under 'APIs & Services' > 'Credentials'."
         },
         {
           "name": "AUTH_GOOGLE_SECRET",
-          "envFiles": ["packages/backend/.env"],
+          "projects": ["backend"],
           "details": "The client secret from your Google OAuth 2.0 credentials. You can find this in the Google Cloud Console under 'APIs & Services' > 'Credentials'."
         }
       ],

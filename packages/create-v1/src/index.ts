@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { type ExecException, exec, spawn } from "node:child_process";
+import { type ExecException, exec, execSync, spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { dirname } from "node:path";
@@ -15,7 +15,7 @@ import wrapAnsi from "wrap-ansi";
 
 interface EnvVariable {
   name: string;
-  envFiles: string[];
+  projects: string[]; // Changed from envFiles to projects
   details: string;
   required?: boolean;
   defaultValue?: string;
@@ -29,8 +29,16 @@ interface SetupStep {
   additionalInstructions?: string[];
 }
 
+interface Project {
+  id: string;
+  envFile?: string;
+  exportCommand?: string;
+  importCommand?: string;
+}
+
 interface SetupConfig {
   introMessage: string;
+  projects: Project[];
   steps: SetupStep[];
 }
 
@@ -43,21 +51,6 @@ function loadConfig(configPath: string): SetupConfig {
   console.log("Loading config from:", configPath);
   const configContent = fs.readFileSync(configPath, "utf-8");
   return JSON.parse(configContent) as SetupConfig;
-}
-
-function getExistingValue(envFiles: string[], key: string): string | undefined {
-  for (const envFile of envFiles) {
-    try {
-      const envContent = fs.readFileSync(envFile, "utf-8");
-      const envConfig = dotenv.parse(envContent);
-      if (envConfig[key]) {
-        return envConfig[key];
-      }
-    } catch (error) {
-      // File doesn't exist or can't be read, continue to the next file
-    }
-  }
-  return undefined;
 }
 
 function updateEnvFile(filePath: string, key: string, value: string): void {
@@ -114,6 +107,60 @@ function createLogger() {
 
 const logger = createLogger();
 
+async function getExistingValue(
+  projects: Project[],
+  key: string,
+): Promise<string | undefined> {
+  for (const project of projects) {
+    if (project.envFile) {
+      const value = getEnvFileValue(project.envFile, key);
+      if (value) return value;
+    } else if (project.importCommand) {
+      try {
+        const value = execSync(project.importCommand.replace("{{name}}", key), {
+          encoding: "utf-8",
+        }).trim();
+        if (value) return value;
+      } catch (error) {
+        console.error(`Failed to import value for ${key} from ${project.id}`);
+      }
+    }
+  }
+  return undefined;
+}
+
+function getEnvFileValue(envFile: string, key: string): string | undefined {
+  try {
+    const envContent = fs.readFileSync(envFile, "utf-8");
+    const envConfig = dotenv.parse(envContent);
+    return envConfig[key];
+  } catch (error) {
+    // File doesn't exist or can't be read
+    return undefined;
+  }
+}
+
+async function updateProjectValue(
+  project: Project,
+  key: string,
+  value: string,
+): Promise<void> {
+  if (project.envFile) {
+    updateEnvFile(project.envFile, key, value);
+  } else if (project.exportCommand) {
+    try {
+      execSync(
+        project.exportCommand
+          .replace("{{name}}", key)
+          .replace("{{value}}", value),
+        { stdio: "inherit" },
+      );
+    } catch (error) {
+      console.error(`Failed to export value for ${key} to ${project.id}`);
+    }
+  }
+}
+
 async function setupEnvironment(
   projectDir: string,
   values: Values,
@@ -141,8 +188,8 @@ async function setupEnvironment(
 
     for (const variable of step.variables) {
       console.log(chalk.dim(`\n${variable.details}`));
-      const existingValue = getExistingValue(
-        variable.envFiles.map((file) => path.join(projectDir, file)),
+      const existingValue = await getExistingValue(
+        config.projects,
         variable.name,
       );
       let templateValue = "";
@@ -168,8 +215,11 @@ async function setupEnvironment(
       const value = answer.value;
 
       if (value || variable.required !== false) {
-        for (const envFile of variable.envFiles) {
-          updateEnvFile(path.join(projectDir, envFile), variable.name, value);
+        for (const projectId of variable.projects) {
+          const project = config.projects.find((p) => p.id === projectId);
+          if (project) {
+            await updateProjectValue(project, variable.name, value);
+          }
         }
         console.log(chalk.green(`✅ Set ${variable.name}`));
       } else {
@@ -192,24 +242,26 @@ async function createNewProject(
   useDevConfig: boolean,
   devConfigPath?: string,
 ): Promise<void> {
-  const projectDir = path.resolve(process.cwd(), projectName);
-
-  logger.log(
-    chalk.bold.cyan(`\n🚀 Creating a new v1 project in ${projectDir}...\n`),
-  );
-
+  const projectDir = path.join(process.cwd(), projectName);
   const values: Values = {
     convexUrl: "",
     convexSiteUrl: "",
   };
 
+  console.log(chalk.cyan(`\nCreating a new v1 project in ${projectDir}`));
+
   const tasks = [
     {
-      title: "Cloning repository",
+      title: "Creating project directory",
+      task: () => fs.mkdirSync(projectDir, { recursive: true }),
+    },
+    {
+      title: "Cloning v1 repository",
       task: () =>
         new Promise<void>((resolve, reject) => {
           exec(
-            `bunx degit erquhart/v1-convex ${projectDir}`,
+            "git clone https://github.com/get-convex/v1.git .",
+            { cwd: projectDir },
             (error: ExecException | null) => {
               if (error) reject(error);
               else resolve();
@@ -299,7 +351,10 @@ async function createNewProject(
               }
 
               values.convexUrl = convexUrl;
-              values.convexSiteUrl = convexUrl.replace(".cloud", ".site");
+              values.convexSiteUrl = convexUrl.replace(
+                "convex.cloud",
+                "convex.site",
+              );
 
               console.log(
                 chalk.green("\nConvex URLs have been retrieved and stored."),
