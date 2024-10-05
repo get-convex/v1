@@ -13,10 +13,6 @@
     {
       "id": "app",
       "envFile": "apps/app/.env"
-    },
-    {
-      "id": "backend",
-      "envFile": "packages/backend/.env"
     }
   ],
   "steps": [
@@ -81,12 +77,12 @@
       "variables": [
         {
           "name": "RESEND_API_KEY",
-          "projects": ["backend"],
+          "projects": ["convex"],
           "details": "Find your API key in the Resend dashboard under 'API Keys'. It starts with 're_'."
         },
         {
           "name": "RESEND_SENDER_EMAIL_AUTH",
-          "projects": ["backend"],
+          "projects": ["convex"],
           "details": "This should be the email address you want to use as the sender for authentication emails. Make sure it's verified in your Resend account under 'Domains'. If not provided, you'll only be able to send emails to the address on your Resend account.",
           "required": false
         }
@@ -98,17 +94,17 @@
       "variables": [
         {
           "name": "POLAR_ORGANIZATION_ID",
-          "projects": ["backend"],
+          "projects": ["convex"],
           "details": "Find your Organization ID in the Polar dashboard under 'Settings'."
         },
         {
           "name": "POLAR_ACCESS_TOKEN",
-          "projects": ["backend"],
+          "projects": ["convex"],
           "details": "Generate a personal access token in the Polar dashboard under 'Account' > 'Developer settings'. Required permissions: 'products:read', 'products:write', 'subscriptions:read'."
         },
         {
           "name": "POLAR_WEBHOOK_SECRET",
-          "projects": ["backend"],
+          "projects": ["convex"],
           "details": "Create a webhook in the Polar dashboard under 'Settings' > 'Webhooks'. The secret will be provided when you create the webhook. The webhook should point to the HTTP Actions URL of your Convex deployment with the path '/events/polar', it should look like 'https://your-convex-deployment.convex.site/events/polar'. You can find your Convex deployment's HTTP Actions URL under 'Settings' > 'URL & Deploy Key'. The payload format should be 'Raw'. You can provide your own secret or use the 'Generate' option. Events to select are subscription.created and subscription.updated."
         }
       ],
@@ -152,7 +148,7 @@
       "variables": [
         {
           "name": "LOOPS_FORM_ID",
-          "projects": ["backend"],
+          "projects": ["convex"],
           "details": "The ID of the Loops form you want to use, found in the Loops dashboard when viewing your form settings.",
           "required": false
         }
@@ -164,12 +160,12 @@
       "variables": [
         {
           "name": "AUTH_GOOGLE_ID",
-          "projects": ["backend"],
+          "projects": ["convex"],
           "details": "The client ID from your Google OAuth 2.0 credentials. You can find this in the Google Cloud Console under 'APIs & Services' > 'Credentials'."
         },
         {
           "name": "AUTH_GOOGLE_SECRET",
-          "projects": ["backend"],
+          "projects": ["convex"],
           "details": "The client secret from your Google OAuth 2.0 credentials. You can find this in the Google Cloud Console under 'APIs & Services' > 'Credentials'."
         }
       ],
