@@ -288,7 +288,7 @@ async function createNewProject(projectName: string): Promise<void> {
             } catch (parseError) {
               reject(
                 new Error(
-                  `Failed to parse function-spec output: ${parseError.message}`,
+                  `Failed to parse function-spec output: ${(parseError as Error).message}`,
                 ),
               );
             }

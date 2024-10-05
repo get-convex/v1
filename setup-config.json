@@ -2,24 +2,13 @@
   "introMessage": "Welcome to the environment setup wizard for Create v1. This will guide you through setting up various services and adding the necessary environment variables.",
   "steps": [
     {
-      "title": "Convex",
-      "instructions": "Set up a Convex project at https://dashboard.convex.dev and obtain your Convex URL.",
-      "variables": [
-        {
-          "name": "NEXT_PUBLIC_CONVEX_URL",
-          "envFiles": ["apps/web/.env", "apps/app/.env"],
-          "details": "You can find your Convex DeploymentURL in the Convex dashboard under 'Settings' > 'URL & Deploy Key'. It should look like 'https://example-123.convex.cloud'."
-        }
-      ]
-    },
-    {
       "title": "OpenPanel",
       "instructions": "Create an account at https://openpanel.dev and get your client ID and secret key.",
       "variables": [
         {
           "name": "OPENPANEL_SECRET_KEY",
           "envFiles": ["apps/app/.env"],
-          "details": "In the OpenPanel dashboard under 'Settings' > 'Projects', you have to create a new project to get a secret key, if you don't already have one. It starts with 'sec_'."
+          "details": "In the OpenPanel dashboard under 'Settings' > 'Projects', you have to create a new client for one of your projects to get a secret key, if you don't already have one. It starts with 'sec_'."
         },
         {
           "name": "NEXT_PUBLIC_OPENPANEL_CLIENT_ID",
@@ -33,9 +22,9 @@
       "instructions": "Set up a project on https://sentry.io and obtain your DSN and other required information.",
       "variables": [
         {
-          "name": "NEXT_PUBLIC_SENTRY_DSN",
+          "name": "SENTRY_ORG",
           "envFiles": ["apps/app/.env"],
-          "details": "You can find your Sentry DSN in the Sentry dashboard under 'Settings' > 'Projects' > [Your Project] > 'Client Keys (DSN)'. It should look like 'https://examplePublicKey@o0.ingest.sentry.io/0'."
+          "details": "Your Sentry organization slug, found under 'Settings' > 'Organization - General Settings'. It's also the subdomain of your Sentry URL."
         },
         {
           "name": "SENTRY_AUTH_TOKEN",
@@ -43,14 +32,14 @@
           "details": "Generate an auth token in the Sentry dashboard under 'Settings' > 'Auth Tokens'."
         },
         {
-          "name": "SENTRY_ORG",
-          "envFiles": ["apps/app/.env"],
-          "details": "Your Sentry organization slug, found under 'Settings' > 'Organization - General Settings'."
-        },
-        {
           "name": "SENTRY_PROJECT",
           "envFiles": ["apps/app/.env"],
           "details": "Your Sentry project ID, found under 'Settings' > 'Projects' > [Your Project] > 'Project Details'."
+        },
+        {
+          "name": "NEXT_PUBLIC_SENTRY_DSN",
+          "envFiles": ["apps/app/.env"],
+          "details": "You can find your Sentry DSN in the Sentry dashboard under 'Settings' > 'Projects' > [Your Project] > 'Client Keys (DSN)'. It should look like 'https://examplePublicKey@o0.ingest.sentry.io/0'."
         }
       ]
     },
@@ -76,14 +65,14 @@
       "instructions": "Set up an account at https://polar.sh for billing and obtain your access token and organization ID.",
       "variables": [
         {
-          "name": "POLAR_ACCESS_TOKEN",
-          "envFiles": ["packages/backend/.env"],
-          "details": "Generate a personal access token in the Polar dashboard under 'Account' > 'Developer settings'. Required permissions: 'products:read', 'products:write', 'subscriptions:read'."
-        },
-        {
           "name": "POLAR_ORGANIZATION_ID",
           "envFiles": ["packages/backend/.env"],
           "details": "Find your Organization ID in the Polar dashboard under 'Settings'."
+        },
+        {
+          "name": "POLAR_ACCESS_TOKEN",
+          "envFiles": ["packages/backend/.env"],
+          "details": "Generate a personal access token in the Polar dashboard under 'Account' > 'Developer settings'. Required permissions: 'products:read', 'products:write', 'subscriptions:read'."
         },
         {
           "name": "POLAR_WEBHOOK_SECRET",
