@@ -7,6 +7,7 @@ import chalk from "chalk";
 import { program } from "commander";
 import dotenv from "dotenv";
 import inquirer from "inquirer";
+import ora from "ora";
 
 interface EnvVariable {
   name: string;
@@ -70,17 +71,20 @@ function updateEnvFile(filePath: string, key: string, value: string): void {
 async function setupEnvironment(projectDir: string): Promise<void> {
   const config = loadConfig(projectDir);
 
-  console.log(chalk.yellow(config.introMessage));
+  console.log(
+    chalk.bold.cyan("\n🚀 Welcome to the v1 Environment Setup Wizard"),
+  );
+  console.log(chalk.dim(config.introMessage));
   console.log(chalk.dim("Press Ctrl+C at any time to exit\n"));
 
   for (const [index, step] of config.steps.entries()) {
-    console.log(chalk.bold.blue(`\nStep ${index + 1}: ${step.title}`));
-    console.log(step.instructions);
+    console.log(chalk.bold.blue(`\n📍 Step ${index + 1}: ${step.title}`));
+    console.log(chalk.white(step.instructions));
 
     if (step.additionalInstructions) {
-      console.log(chalk.yellow("\nAdditional Instructions:"));
+      console.log(chalk.yellow("\nℹ️  Additional Instructions:"));
       for (const instruction of step.additionalInstructions) {
-        console.log(chalk.yellow(`- ${instruction}`));
+        console.log(chalk.yellow(`  • ${instruction}`));
       }
       console.log();
     }
@@ -113,12 +117,12 @@ async function setupEnvironment(projectDir: string): Promise<void> {
       }
     }
 
-    console.log(chalk.green("✔ Step completed"));
+    console.log(chalk.green("✅ Step completed"));
   }
 
   console.log(
     chalk.bold.green(
-      "\nSetup complete! Environment variables have been updated.",
+      "\n🎉 Setup complete! Environment variables have been updated.",
     ),
   );
 }
@@ -126,40 +130,66 @@ async function setupEnvironment(projectDir: string): Promise<void> {
 async function createNewProject(projectName: string): Promise<void> {
   const projectDir = path.resolve(process.cwd(), projectName);
 
-  console.log(`Creating a new v1 project in ${projectDir}...`);
+  console.log(
+    chalk.bold.cyan(`\n🚀 Creating a new v1 project in ${projectDir}...\n`),
+  );
 
-  // Clone the repository
-  execSync(`bunx degit erquhart/v1-convex ${projectDir}`, {
-    stdio: "inherit",
-  });
+  const tasks = [
+    {
+      title: "Cloning repository",
+      task: () =>
+        execSync(`bunx degit erquhart/v1-convex ${projectDir}`, {
+          stdio: "ignore",
+        }),
+    },
+    {
+      title: "Installing dependencies",
+      task: () => {
+        process.chdir(projectDir);
+        execSync("bun install", { stdio: "ignore" });
+      },
+    },
+    {
+      title: "Initializing git repository",
+      task: () =>
+        execSync('git init && git add . && git commit -m "Initial commit"', {
+          stdio: "ignore",
+        }),
+    },
+    {
+      title: "Setting up Convex backend",
+      task: () => {
+        process.chdir("packages/backend");
+        try {
+          execSync("npm run setup", { stdio: "ignore" });
+        } catch (error) {
+          console.log(
+            chalk.yellow(
+              "\nℹ️  Convex setup command failed. This error is expected during initial setup. Continuing...",
+            ),
+          );
+        }
+      },
+    },
+    {
+      title: "Setting up authentication",
+      task: () =>
+        execSync("npx @convex-dev/auth --skip-git-check", { stdio: "ignore" }),
+    },
+  ];
 
-  // Change to project directory
-  process.chdir(projectDir);
-
-  // Install dependencies
-  console.log("Installing dependencies...");
-  execSync("bun install", { stdio: "inherit" });
-
-  // Initialize git repository
-  console.log("Initializing git repository...");
-  execSync('git init && git add . && git commit -m "Initial commit"', {
-    stdio: "inherit",
-  });
-
-  // Set up Convex backend
-  console.log("Setting up Convex backend...");
-  process.chdir("packages/backend");
-  try {
-    execSync("npm run setup", { stdio: "inherit" });
-  } catch (error) {
-    console.log(
-      "Convex setup command failed. This error is expected during initial setup. Continuing...",
-    );
+  for (const task of tasks) {
+    const spinner = ora(task.title).start();
+    try {
+      await task.task();
+      spinner.succeed();
+    } catch (error) {
+      spinner.fail();
+      console.error(chalk.red(`Error during ${task.title.toLowerCase()}:`));
+      console.error(error);
+      process.exit(1);
+    }
   }
-
-  // Set up authentication
-  console.log("Setting up authentication...");
-  execSync("npx @convex-dev/auth --skip-git-check", { stdio: "inherit" });
 
   // Return to project root
   process.chdir("../..");
@@ -167,13 +197,15 @@ async function createNewProject(projectName: string): Promise<void> {
   // Setup environment variables
   await setupEnvironment(projectDir);
 
-  console.log("Project setup complete!");
-  console.log("To start your development server:");
-  console.log(`  cd ${projectName}`);
-  console.log("  bun dev");
+  console.log(chalk.bold.green("\n🎉 Project setup complete!"));
+  console.log(chalk.cyan("\nTo start your development server:"));
+  console.log(chalk.white(`  cd ${projectName}`));
+  console.log(chalk.white("  bun dev"));
 }
 
 async function main() {
+  console.log(chalk.bold.cyan("\n🌟 Welcome to Create v1"));
+
   program
     .name("create-v1")
     .description("Create a new v1 project or manage environment variables")
@@ -233,7 +265,7 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error("An error occurred during project setup:");
+  console.error(chalk.red("\n❌ An error occurred during project setup:"));
   console.error(error);
   process.exit(1);
 });
