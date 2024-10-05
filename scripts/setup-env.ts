@@ -1,9 +1,8 @@
-import { promises as fs } from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import readline from "node:readline";
 import chalk from "chalk";
 import dotenv from "dotenv";
-import ora from "ora";
 
 interface EnvVariable {
   name: string;
@@ -26,57 +25,39 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-async function question(query: string): Promise<string> {
-  return new Promise((resolve) => rl.question(chalk.cyan(query), resolve));
+function question(query: string): Promise<string> {
+  return new Promise((resolve) => {
+    rl.question(chalk.cyan(query), (answer) => {
+      resolve(answer);
+    });
+  });
 }
 
-async function loadConfig(): Promise<SetupConfig> {
-  const spinner = ora("Loading configuration...").start();
+function loadConfig(): SetupConfig {
   const configPath = path.join(process.cwd(), "setup-config.json");
-  try {
-    const configContent = await fs.readFile(configPath, "utf-8");
-    spinner.succeed("Configuration loaded");
-    return JSON.parse(configContent) as SetupConfig;
-  } catch (error) {
-    spinner.fail("Failed to load configuration");
-    throw error;
-  }
+  const configContent = fs.readFileSync(configPath, "utf-8");
+  return JSON.parse(configContent) as SetupConfig;
 }
 
-async function updateEnvFile(
-  filePath: string,
-  key: string,
-  value: string,
-): Promise<void> {
-  const spinner = ora(`Updating ${filePath}...`).start();
-  try {
-    let envContent = "";
-    try {
-      envContent = await fs.readFile(filePath, "utf-8");
-    } catch (error) {
-      // File doesn't exist, we'll create it
-    }
+function updateEnvFile(filePath: string, key: string, value: string): void {
+  let envContent = "";
+  envContent = fs.readFileSync(filePath, "utf-8");
 
-    const envConfig = dotenv.parse(envContent);
-    envConfig[key] = value;
+  const envConfig = dotenv.parse(envContent);
+  envConfig[key] = value;
 
-    const updatedEnvContent = Object.entries(envConfig)
-      .map(([k, v]) => `${k}=${v}`)
-      .join("\n");
+  const updatedEnvContent = Object.entries(envConfig)
+    .map(([k, v]) => `${k}=${v}`)
+    .join("\n");
 
-    await fs.writeFile(filePath, updatedEnvContent);
-    spinner.succeed(`Updated ${filePath}`);
-  } catch (error) {
-    spinner.fail(`Failed to update ${filePath}`);
-    throw error;
-  }
+  fs.writeFileSync(filePath, updatedEnvContent);
 }
 
 async function runSetup(): Promise<void> {
   console.clear();
   console.log(chalk.bold.green("Welcome to the Create v1 Setup Wizard\n"));
 
-  const config = await loadConfig();
+  const config = loadConfig();
 
   console.log(chalk.yellow(config.introMessage));
   console.log(chalk.dim("Press Ctrl+C at any time to exit\n"));
@@ -88,7 +69,7 @@ async function runSetup(): Promise<void> {
     for (const variable of step.variables) {
       const value = await question(`Enter ${chalk.bold(variable.name)}: `);
       for (const envFile of variable.envFiles) {
-        await updateEnvFile(envFile, variable.name, value);
+        updateEnvFile(envFile, variable.name, value);
       }
     }
 
@@ -101,11 +82,16 @@ async function runSetup(): Promise<void> {
     ),
   );
   console.log(chalk.yellow("You can now start your development server."));
-  rl.close();
 }
 
-runSetup().catch((error) => {
-  console.error(chalk.red("An error occurred during setup:"));
-  console.error(error);
-  process.exit(1);
-});
+runSetup()
+  .then(() => {
+    rl.close();
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error(chalk.red("An error occurred during setup:"));
+    console.error(error);
+    rl.close();
+    process.exit(1);
+  });

@@ -18,7 +18,7 @@
     "lint:repo": "bunx sherif@latest",
     "lint:repo:fix": "bunx sherif@latest --fix",
     "typecheck": "turbo typecheck",
-    "setup-env": "ts-node scripts/setup-env.ts"
+    "setup-env": "node -r ts-node/register scripts/setup-env.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
