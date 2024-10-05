@@ -1,27 +1,89 @@
 {
-  "introMessage": "Welcome to the environment setup wizard. This will guide you through setting up various services and adding the necessary environment variables.",
+  "introMessage": "Welcome to the environment setup wizard for Create v1. This will guide you through setting up various services and adding the necessary environment variables.",
   "steps": [
     {
-      "title": "Dub.co",
-      "instructions": "Head over to https://dub.co to set up an account.",
+      "title": "Convex",
+      "instructions": "Set up a Convex project at https://dashboard.convex.dev and obtain your Convex URL.",
       "variables": [
         {
-          "name": "NEXT_PUBLIC_DUB_URL",
-          "envFiles": ["apps/web/.env", "apps/app/.env"]
-        },
-        {
-          "name": "DUB_API_KEY",
+          "name": "NEXT_PUBLIC_CONVEX_URL",
           "envFiles": ["apps/web/.env", "apps/app/.env"]
         }
       ]
     },
     {
-      "title": "OpenAI",
-      "instructions": "Visit https://platform.openai.com to create an API key.",
+      "title": "OpenPanel",
+      "instructions": "Create an account at https://openpanel.dev and get your client ID and secret key.",
       "variables": [
         {
-          "name": "OPENAI_API_KEY",
+          "name": "NEXT_PUBLIC_OPENPANEL_CLIENT_ID",
           "envFiles": ["apps/web/.env", "apps/app/.env"]
+        },
+        {
+          "name": "OPENPANEL_SECRET_KEY",
+          "envFiles": ["apps/app/.env"]
+        }
+      ]
+    },
+    {
+      "title": "Sentry",
+      "instructions": "Set up a project on https://sentry.io and obtain your DSN.",
+      "variables": [
+        {
+          "name": "NEXT_PUBLIC_SENTRY_DSN",
+          "envFiles": ["apps/app/.env"]
+        }
+      ]
+    },
+    {
+      "title": "Resend",
+      "instructions": "Create an account at https://resend.com and get your API key.",
+      "variables": [
+        {
+          "name": "RESEND_API_KEY",
+          "envFiles": ["packages/backend/.env"]
+        },
+        {
+          "name": "RESEND_SENDER_EMAIL_AUTH",
+          "envFiles": ["packages/backend/.env"]
+        }
+      ]
+    },
+    {
+      "title": "Polar",
+      "instructions": "Set up an account at https://polar.sh for billing (coming soon) and obtain your access token and organization ID.",
+      "variables": [
+        {
+          "name": "POLAR_ACCESS_TOKEN",
+          "envFiles": ["packages/backend/.env"]
+        },
+        {
+          "name": "POLAR_ORGANIZATION_ID",
+          "envFiles": ["packages/backend/.env"]
+        },
+        {
+          "name": "POLAR_WEBHOOK_SECRET",
+          "envFiles": ["packages/backend/.env"]
+        }
+      ]
+    },
+    {
+      "title": "Cal.com",
+      "instructions": "Set up your Cal.com account and get your public link.",
+      "variables": [
+        {
+          "name": "NEXT_PUBLIC_CAL_LINK",
+          "envFiles": ["apps/web/.env"]
+        }
+      ]
+    },
+    {
+      "title": "Site URL",
+      "instructions": "Enter the URL where your site will be hosted.",
+      "variables": [
+        {
+          "name": "SITE_URL",
+          "envFiles": ["packages/backend/.env"]
         }
       ]
     }
