@@ -72,31 +72,52 @@ OpenPanel<br>
 
 ## Getting Started
 
-Clone this repo locally with the following command:
+Follow these steps to set up your project:
+
+1. Clone the repository:
+   ```bash
+   bunx degit get-convex/v1 v1
+   cd v1
+   ```
+
+2. Install dependencies:
+   ```bash
+   bun install
+   ```
+
+3. Initialize git repository:
+   ```bash
+   git init && git commit -am 'initial commit'
+   ```
+
+4. Set up Convex backend:
+   ```bash
+   cd packages/backend
+   npm run setup
+   ```
+   This will create a new Convex project. It will fail after project creation due to missing environment variables, which is expected at this stage.
+
+5. Set up authentication:
+   ```bash
+   npx @convex-dev/auth
+   ```
+   Follow the prompts to configure authentication for your project.
+
+6. Return to the root directory and run the setup script:
+   ```bash
+   cd ../..
+   bun run setup-env
+   ```
+   This script will guide you through setting up various services and environment variables.
+
+7. Copy Convex environment variables:
+   - Copy the contents of `packages/backend/.env`
+   - Paste these variables into the environment variables panel in your Convex dashboard
+
+8. Start the development server from either bun or turbo:
 
 ```bash
-bunx degit get-convex/v1-convex v1
-```
-
-1. Install dependencies using bun:
-
-```sh
-bun i
-```
-
-2. Copy `.env.example` to `.env` and update the variables.
-
-```sh
-# Copy .env.example to .env for each app
-cp apps/app/.env.example apps/app/.env
-cp apps/web/.env.example apps/web/.env
-cp packages/backend/.env.example packages/backend/.env
-```
-
-4. Start the development server from either bun or turbo:
-
-```ts
-bun dev // starts everything in development mode (web, app, api, email)
+bun dev // starts everything in development mode
 bun dev:web // starts the web app in development mode
 bun dev:app // starts the app in development mode
 bun dev:convex // starts the convex api in development mode
