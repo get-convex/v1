@@ -242,26 +242,22 @@ async function createNewProject(
   useDevConfig: boolean,
   devConfigPath?: string,
 ): Promise<void> {
-  const projectDir = path.join(process.cwd(), projectName);
+  const projectDir = path.resolve(process.cwd(), projectName);
   const values: Values = {
     convexUrl: "",
     convexSiteUrl: "",
   };
-
-  console.log(chalk.cyan(`\nCreating a new v1 project in ${projectDir}`));
+  logger.log(
+    chalk.bold.cyan(`\n🚀 Creating a new v1 project in ${projectDir}...\n`),
+  );
 
   const tasks = [
     {
-      title: "Creating project directory",
-      task: () => fs.mkdirSync(projectDir, { recursive: true }),
-    },
-    {
-      title: "Cloning v1 repository",
+      title: "Cloning repository",
       task: () =>
         new Promise<void>((resolve, reject) => {
           exec(
-            "git clone https://github.com/get-convex/v1.git .",
-            { cwd: projectDir },
+            `bunx degit erquhart/v1-convex ${projectDir}`,
             (error: ExecException | null) => {
               if (error) reject(error);
               else resolve();
