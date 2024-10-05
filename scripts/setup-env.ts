@@ -31,7 +31,9 @@ function question(query: string, defaultValue?: string): Promise<string> {
   const defaultPrompt = defaultValue ? ` (${defaultValue})` : "";
   return new Promise((resolve) => {
     rl.question(chalk.cyan(`${query}${defaultPrompt}: `), (answer) => {
-      resolve(answer || defaultValue || "");
+      resolve(
+        answer.toLowerCase() === "skip" ? "SKIP" : answer || defaultValue || "",
+      );
     });
   });
 }
@@ -90,16 +92,21 @@ async function runSetup(): Promise<void> {
 
     for (const variable of step.variables) {
       console.log(chalk.dim(`\n${variable.details}`));
+      console.log(chalk.dim("Type 'skip' to skip this variable"));
       const existingValue = getExistingValue(variable.envFiles, variable.name);
       const requiredText = variable.required === false ? " (optional)" : "";
       const value = await question(
         `Enter ${chalk.bold(variable.name)}${requiredText}`,
         existingValue,
       );
-      if (value || variable.required !== false) {
-        for (const envFile of variable.envFiles) {
-          updateEnvFile(envFile, variable.name, value);
+      if (value !== "SKIP") {
+        if (value || variable.required !== false) {
+          for (const envFile of variable.envFiles) {
+            updateEnvFile(envFile, variable.name, value);
+          }
         }
+      } else {
+        console.log(chalk.yellow(`Skipped ${variable.name}`));
       }
     }
 

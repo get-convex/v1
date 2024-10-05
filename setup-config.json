@@ -40,17 +40,17 @@
         {
           "name": "SENTRY_AUTH_TOKEN",
           "envFiles": ["apps/app/.env"],
-          "details": "Generate an auth token in the Sentry dashboard under 'Settings' > 'Account' > 'API Keys'."
+          "details": "Generate an auth token in the Sentry dashboard under 'Settings' > 'Auth Tokens'."
         },
         {
           "name": "SENTRY_ORG",
           "envFiles": ["apps/app/.env"],
-          "details": "Your Sentry organization slug, found in the URL when you're in your Sentry dashboard."
+          "details": "Your Sentry organization slug, found under 'Settings' > 'Organization - General Settings'."
         },
         {
           "name": "SENTRY_PROJECT",
           "envFiles": ["apps/app/.env"],
-          "details": "Your Sentry project name or ID, found in the project settings."
+          "details": "Your Sentry project ID, found under 'Settings' > 'Projects' > [Your Project] > 'Project Details'."
         }
       ]
     },
@@ -122,23 +122,14 @@
         {
           "name": "NEXT_PUBLIC_DUB_URL",
           "envFiles": ["apps/app/.env"],
-          "details": "Your Dub project URL, typically in the format 'https://your-project.dub.sh'."
+          "details": "Your Dub project URL, typically in the format 'https://your-project.dub.sh'.",
+          "required": false
         },
         {
           "name": "DUB_API_KEY",
           "envFiles": ["apps/app/.env"],
-          "details": "Your Dub API key, found in your Dub dashboard under API settings."
-        }
-      ]
-    },
-    {
-      "title": "OpenAI",
-      "instructions": "Set up an account at https://openai.com and obtain an API key.",
-      "variables": [
-        {
-          "name": "OPENAI_API_KEY",
-          "envFiles": ["apps/app/.env"],
-          "details": "Your OpenAI API key, found in the OpenAI dashboard under 'API Keys'."
+          "details": "Your Dub API key, found in your Dub dashboard under API settings.",
+          "required": false
         }
       ]
     },
@@ -160,7 +151,8 @@
         {
           "name": "LOOPS_FORM_ID",
           "envFiles": ["packages/backend/.env"],
-          "details": "The ID of the Loops form you want to use, found in the Loops dashboard when viewing your form settings."
+          "details": "The ID of the Loops form you want to use, found in the Loops dashboard when viewing your form settings.",
+          "required": false
         }
       ]
     }
