@@ -2,6 +2,17 @@
   "introMessage": "Welcome to the environment setup wizard for Create v1. This will guide you through setting up various services and adding the necessary environment variables.",
   "steps": [
     {
+      "title": "Convex",
+      "instructions": "Set up a Convex project at https://dashboard.convex.dev and obtain your Convex URL.",
+      "variables": [
+        {
+          "name": "NEXT_PUBLIC_CONVEX_URL",
+          "envFiles": ["apps/web/.env", "apps/app/.env"],
+          "details": "You can find your Convex DeploymentURL in the Convex dashboard under 'Settings' > 'URL & Deploy Key'. It should look like 'https://example-123.convex.cloud'."
+        }
+      ]
+    },
+    {
       "title": "OpenPanel",
       "instructions": "Create an account at https://openpanel.dev and get your client ID and secret key.",
       "variables": [
