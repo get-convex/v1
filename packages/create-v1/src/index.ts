@@ -3,11 +3,13 @@
 import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import boxen from "boxen";
 import chalk from "chalk";
 import { program } from "commander";
 import dotenv from "dotenv";
 import inquirer from "inquirer";
 import ora from "ora";
+import wrapAnsi from "wrap-ansi";
 
 interface EnvVariable {
   name: string;
@@ -127,6 +129,19 @@ async function setupEnvironment(projectDir: string): Promise<void> {
   );
 }
 
+function printBox(title: string, content: string) {
+  const wrapped = wrapAnsi(content, 60);
+  console.log(
+    boxen(wrapped, {
+      title,
+      titleAlignment: "center",
+      padding: 1,
+      margin: 1,
+      borderColor: "cyan",
+    }),
+  );
+}
+
 async function createNewProject(projectName: string): Promise<void> {
   const projectDir = path.resolve(process.cwd(), projectName);
 
@@ -158,14 +173,19 @@ async function createNewProject(projectName: string): Promise<void> {
     },
     {
       title: "Setting up Convex backend",
-      task: () => {
+      task: async () => {
         process.chdir("packages/backend");
+        printBox(
+          "🔧 Convex Setup",
+          "You'll now be guided through the Convex project setup process. This will create a new Convex project or link to an existing one.",
+        );
+
         try {
-          execSync("npm run setup", { stdio: "ignore" });
+          execSync("npm run setup", { stdio: "inherit" });
         } catch (error) {
           console.log(
             chalk.yellow(
-              "\nℹ️  Convex setup command failed. This error is expected during initial setup. Continuing...",
+              "\nNote: The Convex setup process exited as expected. This is normal at this stage due to missing environment variables.",
             ),
           );
         }
@@ -173,15 +193,31 @@ async function createNewProject(projectName: string): Promise<void> {
     },
     {
       title: "Setting up authentication",
-      task: () =>
-        execSync("npx @convex-dev/auth --skip-git-check", { stdio: "ignore" }),
+      task: async () => {
+        printBox(
+          "🔐 Authentication Setup",
+          "You'll now be guided through the authentication setup process. This will configure authentication for your Convex project.",
+        );
+
+        try {
+          execSync("npx @convex-dev/auth --skip-git-check", {
+            stdio: "inherit",
+          });
+        } catch (error) {
+          console.log(
+            chalk.yellow(
+              "\nNote: The authentication setup process exited as expected. This is normal at this stage due to missing environment variables.",
+            ),
+          );
+        }
+      },
     },
   ];
 
   for (const task of tasks) {
     const spinner = ora(task.title).start();
     try {
-      await task.task();
+      task.task();
       spinner.succeed();
     } catch (error) {
       spinner.fail();
