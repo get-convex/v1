@@ -8,7 +8,7 @@ import chalk from "chalk";
 import { program } from "commander";
 import dotenv from "dotenv";
 import inquirer from "inquirer";
-import ora from "ora";
+import ora, { type Ora } from "ora";
 import wrapAnsi from "wrap-ansi";
 
 interface EnvVariable {
@@ -83,6 +83,29 @@ function printBox(title: string, content: string) {
   );
 }
 
+function createLogger() {
+  let enabled = true;
+  return {
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    log: (...args: any[]) => {
+      if (enabled) {
+        console.log(...args);
+      }
+    },
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    error: (...args: any[]) => {
+      if (enabled) {
+        console.error(...args);
+      }
+    },
+    setEnabled: (value: boolean) => {
+      enabled = value;
+    },
+  };
+}
+
+const logger = createLogger();
+
 async function setupEnvironment(projectDir: string): Promise<void> {
   const config = loadConfig(projectDir);
 
@@ -145,7 +168,7 @@ async function setupEnvironment(projectDir: string): Promise<void> {
 async function createNewProject(projectName: string): Promise<void> {
   const projectDir = path.resolve(process.cwd(), projectName);
 
-  console.log(
+  logger.log(
     chalk.bold.cyan(`\n🚀 Creating a new v1 project in ${projectDir}...\n`),
   );
 
@@ -189,13 +212,14 @@ async function createNewProject(projectName: string): Promise<void> {
     },
     {
       title: "Setting up Convex backend",
-      task: async () => {
+      task: async (spinner: Ora) => {
         process.chdir("packages/backend");
         printBox(
           "🔧 Convex Setup",
           "You'll now be guided through the Convex project setup process. This will create a new Convex project or link to an existing one.",
         );
 
+        spinner.stop();
         return new Promise<void>((resolve, reject) => {
           const child = spawn("npm", ["run", "setup"], {
             stdio: "inherit",
@@ -204,7 +228,7 @@ async function createNewProject(projectName: string): Promise<void> {
 
           child.on("exit", (code) => {
             if (code === 0 || code === 1) {
-              console.log(
+              logger.log(
                 chalk.yellow(
                   "\nNote: The Convex setup process exited as expected. This is normal at this stage due to missing environment variables.",
                 ),
@@ -223,12 +247,13 @@ async function createNewProject(projectName: string): Promise<void> {
     },
     {
       title: "Setting up authentication",
-      task: async () => {
+      task: async (spinner: Ora) => {
         printBox(
           "🔐 Authentication Setup",
           "You'll now be guided through the authentication setup process. This will configure authentication for your Convex project.",
         );
 
+        spinner.stop();
         return new Promise<void>((resolve, reject) => {
           const child = spawn("npx", ["@convex-dev/auth", "--skip-git-check"], {
             stdio: "inherit",
@@ -237,7 +262,7 @@ async function createNewProject(projectName: string): Promise<void> {
 
           child.on("exit", (code) => {
             if (code === 0 || code === 1) {
-              console.log(
+              logger.log(
                 chalk.yellow(
                   "\nNote: The authentication setup process exited as expected. This is normal at this stage due to missing environment variables.",
                 ),
@@ -261,12 +286,15 @@ async function createNewProject(projectName: string): Promise<void> {
   for (const task of tasks) {
     const spinner = ora(task.title).start();
     try {
-      await task.task();
+      logger.setEnabled(false);
+      await task.task(spinner);
+      logger.setEnabled(true);
       spinner.succeed();
     } catch (error) {
+      logger.setEnabled(true);
       spinner.fail();
-      console.error(chalk.red(`Error during ${task.title.toLowerCase()}:`));
-      console.error(error);
+      logger.error(chalk.red(`Error during ${task.title.toLowerCase()}:`));
+      logger.error(error);
       process.exit(1);
     }
   }
