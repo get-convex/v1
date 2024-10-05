@@ -26,10 +26,11 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-function question(query: string): Promise<string> {
+function question(query: string, defaultValue?: string): Promise<string> {
+  const defaultPrompt = defaultValue ? ` (${defaultValue})` : "";
   return new Promise((resolve) => {
-    rl.question(chalk.cyan(query), (answer) => {
-      resolve(answer);
+    rl.question(chalk.cyan(`${query}${defaultPrompt}: `), (answer) => {
+      resolve(answer || defaultValue || "");
     });
   });
 }
@@ -38,6 +39,21 @@ function loadConfig(): SetupConfig {
   const configPath = path.join(process.cwd(), "setup-config.json");
   const configContent = fs.readFileSync(configPath, "utf-8");
   return JSON.parse(configContent) as SetupConfig;
+}
+
+function getExistingValue(envFiles: string[], key: string): string | undefined {
+  for (const envFile of envFiles) {
+    try {
+      const envContent = fs.readFileSync(envFile, "utf-8");
+      const envConfig = dotenv.parse(envContent);
+      if (envConfig[key]) {
+        return envConfig[key];
+      }
+    } catch (error) {
+      // File doesn't exist or can't be read, continue to the next file
+    }
+  }
+  return undefined;
 }
 
 function updateEnvFile(filePath: string, key: string, value: string): void {
@@ -73,7 +89,11 @@ async function runSetup(): Promise<void> {
 
     for (const variable of step.variables) {
       console.log(chalk.dim(`\n${variable.details}`));
-      const value = await question(`Enter ${chalk.bold(variable.name)}: `);
+      const existingValue = getExistingValue(variable.envFiles, variable.name);
+      const value = await question(
+        `Enter ${chalk.bold(variable.name)}`,
+        existingValue,
+      );
       for (const envFile of variable.envFiles) {
         updateEnvFile(envFile, variable.name, value);
       }
