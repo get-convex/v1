@@ -49,8 +49,21 @@ interface Values {
 
 function loadConfig(configPath: string): SetupConfig {
   console.log("Loading config from:", configPath);
-  const configContent = fs.readFileSync(configPath, "utf-8");
-  return JSON.parse(configContent) as SetupConfig;
+  try {
+    const configContent = fs.readFileSync(configPath, "utf-8");
+    const config = JSON.parse(configContent) as SetupConfig;
+
+    if (!Array.isArray(config.projects)) {
+      throw new Error("Config file is missing the 'projects' array");
+    }
+
+    return config;
+  } catch (error) {
+    console.error(
+      chalk.red(`Error loading config file: ${(error as Error).message}`),
+    );
+    process.exit(1);
+  }
 }
 
 function updateEnvFile(filePath: string, key: string, value: string): void {
