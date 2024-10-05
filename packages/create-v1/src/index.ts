@@ -123,67 +123,110 @@ async function setupEnvironment(projectDir: string): Promise<void> {
   );
 }
 
+async function createNewProject(projectName: string): Promise<void> {
+  const projectDir = path.resolve(process.cwd(), projectName);
+
+  console.log(`Creating a new v1 project in ${projectDir}...`);
+
+  // Clone the repository
+  execSync(`bunx degit erquhart/v1-convex ${projectDir}`, {
+    stdio: "inherit",
+  });
+
+  // Change to project directory
+  process.chdir(projectDir);
+
+  // Install dependencies
+  console.log("Installing dependencies...");
+  execSync("bun install", { stdio: "inherit" });
+
+  // Initialize git repository
+  console.log("Initializing git repository...");
+  execSync('git init && git add . && git commit -m "Initial commit"', {
+    stdio: "inherit",
+  });
+
+  // Set up Convex backend
+  console.log("Setting up Convex backend...");
+  process.chdir("packages/backend");
+  try {
+    execSync("npm run setup", { stdio: "inherit" });
+  } catch (error) {
+    console.log(
+      "Convex setup command failed. This error is expected during initial setup. Continuing...",
+    );
+  }
+
+  // Set up authentication
+  console.log("Setting up authentication...");
+  execSync("npx @convex-dev/auth --skip-git-check", { stdio: "inherit" });
+
+  // Return to project root
+  process.chdir("../..");
+
+  // Setup environment variables
+  await setupEnvironment(projectDir);
+
+  console.log("Project setup complete!");
+  console.log("To start your development server:");
+  console.log(`  cd ${projectName}`);
+  console.log("  bun dev");
+}
+
 async function main() {
   program
     .name("create-v1")
-    .description("Create a new v1 project")
-    .argument("[project-directory]", "directory to create the project in")
-    .action(async (projectDirectory) => {
-      const answers = await inquirer.prompt([
-        {
-          type: "input",
-          name: "projectName",
-          message: "What is your project named?",
-          default: projectDirectory || "my-v1-project",
-        },
-      ]);
+    .description("Create a new v1 project or manage environment variables")
+    .argument("[project-name]", "Name of the new project")
+    .action(async (projectName) => {
+      if (!projectName) {
+        const { action } = await inquirer.prompt([
+          {
+            type: "list",
+            name: "action",
+            message: "What would you like to do?",
+            choices: [
+              { name: "Create a new v1 project", value: "create" },
+              {
+                name: "Manage environment variables for an existing project",
+                value: "env",
+              },
+            ],
+          },
+        ]);
 
-      const projectDir = path.resolve(process.cwd(), answers.projectName);
-
-      console.log(`Creating a new v1 project in ${projectDir}...`);
-
-      // Clone the repository
-      execSync(`bunx degit erquhart/v1-convex ${projectDir}`, {
-        stdio: "inherit",
-      });
-
-      // Change to project directory
-      process.chdir(projectDir);
-
-      // Install dependencies
-      console.log("Installing dependencies...");
-      execSync("bun install", { stdio: "inherit" });
-
-      // Initialize git repository
-      console.log("Initializing git repository...");
-      execSync('git init && git add . && git commit -m "Initial commit"', {
-        stdio: "inherit",
-      });
-
-      // Set up Convex backend
-      console.log("Setting up Convex backend...");
-      process.chdir("packages/backend");
-      try {
-        execSync("npm run setup", { stdio: "inherit" });
-      } catch (error) {
-        console.log(
-          "Convex setup command failed. This error is expected during initial setup. Continuing...",
-        );
+        if (action === "create") {
+          const { projectName } = await inquirer.prompt([
+            {
+              type: "input",
+              name: "projectName",
+              message: "What is your project named?",
+              default: "my-v1-project",
+            },
+          ]);
+          await createNewProject(projectName);
+        } else {
+          // Manage environment variables for an existing project
+          const currentDir = process.cwd();
+          if (!fs.existsSync(path.join(currentDir, "setup-config.json"))) {
+            console.error(
+              chalk.red(
+                "Error: This doesn't appear to be a v1 project directory.",
+              ),
+            );
+            console.error(
+              chalk.red(
+                "Please run this command from the root of your v1 project.",
+              ),
+            );
+            process.exit(1);
+          }
+          await setupEnvironment(currentDir);
+        }
+      } else {
+        // If a project name is provided, create a new project
+        await createNewProject(projectName);
       }
-
-      // Set up authentication
-      console.log("Setting up authentication...");
-      execSync("npx @convex-dev/auth --skip-git-check", { stdio: "inherit" });
-
-      // Run the environment setup
-      console.log("Setting up environment variables...");
-      process.chdir("../..");
-      await setupEnvironment(projectDir);
-
-      console.log("Project setup complete!");
-      console.log("To start your development server:");
-      console.log(`  cd ${answers.projectName}`);
-      console.log("  bun dev");
     });
 
   await program.parseAsync(process.argv);
