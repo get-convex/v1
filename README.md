@@ -64,11 +64,18 @@ reuse and best practices that will grow with your business.
 
 ## Prerequisites
 
-Bun<br>
-Dub<br>
-Resend<br>
-Sentry<br>
-OpenPanel<br>
+### Bun
+
+Bun is the only prerequisite you need to install before getting started.
+
+To install Bun, please follow the official installation instructions:
+
+[Bun Installation Guide](https://bun.sh/docs/installation)
+
+After installation, make sure you have Bun version 1.0.0 or higher. You can check your Bun version by running:
+
+```bash
+```
 
 ## Getting Started
 
@@ -198,6 +205,7 @@ If you choose to manually set up services and environment variables, follow thes
 ### Polar
 
 1. Set up an account at https://polar.sh
+   _Note: If you're just testing, be sure to switch to Sandbox via the top left dropdown in the dashboard before proceeding._
 2. Add the following to `packages/backend/.env`:
    ```
    # Generate this in Polar dashboard under 'Account' > 'Developer settings'
@@ -211,9 +219,6 @@ If you choose to manually set up services and environment variables, follow thes
    # The webhook should point to: https://your-convex-deployment.convex.site/events/polar
    POLAR_WEBHOOK_SECRET=whsec_foobarfoobarfoobarfoobarfoobar42
    ```
-
-**Additional Configuration for Polar:**
-- If you're just testing, be sure to switch to Sandbox via the top left dropdown in the dashboard before proceeding.
 
 ### Cal.com (Optional)
 
