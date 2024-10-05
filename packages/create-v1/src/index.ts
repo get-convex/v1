@@ -49,14 +49,14 @@ async function main() {
       try {
         execSync("npm run setup", { stdio: "inherit" });
       } catch (error) {
-        console.error(
+        console.log(
           "Convex setup command failed. This error is expected during initial setup. Continuing...",
         );
       }
 
       // Set up authentication
       console.log("Setting up authentication...");
-      execSync("npx @convex-dev/auth", { stdio: "inherit" });
+      execSync("npx @convex-dev/auth --skip-git-check", { stdio: "inherit" });
 
       // Run the setup-env script
       console.log("Setting up environment variables...");
