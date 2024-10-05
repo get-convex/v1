@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { execSync } from "node:child_process";
+import { type ExecException, exec, spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import boxen from "boxen";
@@ -70,6 +70,19 @@ function updateEnvFile(filePath: string, key: string, value: string): void {
   fs.writeFileSync(filePath, newContent);
 }
 
+function printBox(title: string, content: string) {
+  const wrapped = wrapAnsi(content, 60);
+  console.log(
+    boxen(wrapped, {
+      title,
+      titleAlignment: "center",
+      padding: 1,
+      margin: 1,
+      borderColor: "cyan",
+    }),
+  );
+}
+
 async function setupEnvironment(projectDir: string): Promise<void> {
   const config = loadConfig(projectDir);
 
@@ -129,19 +142,6 @@ async function setupEnvironment(projectDir: string): Promise<void> {
   );
 }
 
-function printBox(title: string, content: string) {
-  const wrapped = wrapAnsi(content, 60);
-  console.log(
-    boxen(wrapped, {
-      title,
-      titleAlignment: "center",
-      padding: 1,
-      margin: 1,
-      borderColor: "cyan",
-    }),
-  );
-}
-
 async function createNewProject(projectName: string): Promise<void> {
   const projectDir = path.resolve(process.cwd(), projectName);
 
@@ -153,22 +153,38 @@ async function createNewProject(projectName: string): Promise<void> {
     {
       title: "Cloning repository",
       task: () =>
-        execSync(`bunx degit erquhart/v1-convex ${projectDir}`, {
-          stdio: "ignore",
+        new Promise<void>((resolve, reject) => {
+          exec(
+            `bunx degit erquhart/v1-convex ${projectDir}`,
+            (error: ExecException | null) => {
+              if (error) reject(error);
+              else resolve();
+            },
+          );
         }),
     },
     {
       title: "Installing dependencies",
-      task: () => {
-        process.chdir(projectDir);
-        execSync("bun install", { stdio: "ignore" });
-      },
+      task: () =>
+        new Promise<void>((resolve, reject) => {
+          process.chdir(projectDir);
+          exec("bun install", (error: ExecException | null) => {
+            if (error) reject(error);
+            else resolve();
+          });
+        }),
     },
     {
       title: "Initializing git repository",
       task: () =>
-        execSync('git init && git add . && git commit -m "Initial commit"', {
-          stdio: "ignore",
+        new Promise<void>((resolve, reject) => {
+          exec(
+            'git init && git add . && git commit -m "Initial commit"',
+            (error: ExecException | null) => {
+              if (error) reject(error);
+              else resolve();
+            },
+          );
         }),
     },
     {
@@ -180,15 +196,29 @@ async function createNewProject(projectName: string): Promise<void> {
           "You'll now be guided through the Convex project setup process. This will create a new Convex project or link to an existing one.",
         );
 
-        try {
-          execSync("npm run setup", { stdio: "inherit" });
-        } catch (error) {
-          console.log(
-            chalk.yellow(
-              "\nNote: The Convex setup process exited as expected. This is normal at this stage due to missing environment variables.",
-            ),
-          );
-        }
+        return new Promise<void>((resolve, reject) => {
+          const child = spawn("npm", ["run", "setup"], {
+            stdio: "inherit",
+            shell: true,
+          });
+
+          child.on("exit", (code) => {
+            if (code === 0 || code === 1) {
+              console.log(
+                chalk.yellow(
+                  "\nNote: The Convex setup process exited as expected. This is normal at this stage due to missing environment variables.",
+                ),
+              );
+              resolve();
+            } else {
+              reject(new Error(`Convex setup exited with code ${code}`));
+            }
+          });
+
+          child.on("error", (error) => {
+            reject(error);
+          });
+        });
       },
     },
     {
@@ -199,17 +229,31 @@ async function createNewProject(projectName: string): Promise<void> {
           "You'll now be guided through the authentication setup process. This will configure authentication for your Convex project.",
         );
 
-        try {
-          execSync("npx @convex-dev/auth --skip-git-check", {
+        return new Promise<void>((resolve, reject) => {
+          const child = spawn("npx", ["@convex-dev/auth", "--skip-git-check"], {
             stdio: "inherit",
+            shell: true,
           });
-        } catch (error) {
-          console.log(
-            chalk.yellow(
-              "\nNote: The authentication setup process exited as expected. This is normal at this stage due to missing environment variables.",
-            ),
-          );
-        }
+
+          child.on("exit", (code) => {
+            if (code === 0 || code === 1) {
+              console.log(
+                chalk.yellow(
+                  "\nNote: The authentication setup process exited as expected. This is normal at this stage due to missing environment variables.",
+                ),
+              );
+              resolve();
+            } else {
+              reject(
+                new Error(`Authentication setup exited with code ${code}`),
+              );
+            }
+          });
+
+          child.on("error", (error) => {
+            reject(error);
+          });
+        });
       },
     },
   ];
@@ -217,7 +261,7 @@ async function createNewProject(projectName: string): Promise<void> {
   for (const task of tasks) {
     const spinner = ora(task.title).start();
     try {
-      task.task();
+      await task.task();
       spinner.succeed();
     } catch (error) {
       spinner.fail();
@@ -246,9 +290,9 @@ async function main() {
     .name("create-v1")
     .description("Create a new v1 project or manage environment variables")
     .argument("[project-name]", "Name of the new project")
-    .action(async (projectName) => {
+    .action(async (projectName: string | undefined) => {
       if (!projectName) {
-        const { action } = await inquirer.prompt([
+        const { action } = await inquirer.prompt<{ action: string }>([
           {
             type: "list",
             name: "action",
@@ -264,7 +308,9 @@ async function main() {
         ]);
 
         if (action === "create") {
-          const { projectName } = await inquirer.prompt([
+          const { projectName } = await inquirer.prompt<{
+            projectName: string;
+          }>([
             {
               type: "input",
               name: "projectName",
