@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { execSync } from "child_process";
-import fs from "fs";
-import path from "path";
+import { execSync } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
 import { program } from "commander";
 import inquirer from "inquirer";
 
@@ -27,7 +27,7 @@ async function main() {
       console.log(`Creating a new v1 project in ${projectDir}...`);
 
       // Clone the repository
-      execSync(`bunx degit get-convex/v1 ${projectDir}`);
+      execSync(`bunx degit erquhart/v1-convex ${projectDir}`);
 
       // Change to project directory
       process.chdir(projectDir);
