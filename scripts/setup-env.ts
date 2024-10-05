@@ -16,6 +16,7 @@ interface SetupStep {
   title: string;
   instructions: string;
   variables: EnvVariable[];
+  additionalInstructions?: string[];
 }
 
 interface SetupConfig {
@@ -92,6 +93,14 @@ async function runSetup(): Promise<void> {
   for (const [index, step] of config.steps.entries()) {
     console.log(chalk.bold.blue(`\nStep ${index + 1}: ${step.title}`));
     console.log(step.instructions);
+
+    if (step.additionalInstructions) {
+      console.log(chalk.yellow("\nAdditional Instructions:"));
+      for (const instruction of step.additionalInstructions) {
+        console.log(chalk.yellow(`- ${instruction}`));
+      }
+      console.log(); // Add an empty line for better readability
+    }
 
     for (const variable of step.variables) {
       console.log(chalk.dim(`\n${variable.details}`));

@@ -130,6 +130,11 @@
           "name": "CONVEX_SITE_URL",
           "envFiles": ["packages/backend/.env"],
           "details": "The URL of your Convex deployment, typically the same as NEXT_PUBLIC_CONVEX_URL but without the 'https://' prefix."
+        },
+        {
+          "name": "CONVEX_AUTH_CALLBACK_URL",
+          "envFiles": ["packages/backend/.env"],
+          "details": "The full HTTP Actions URL of your Convex deployment with the path '/api/auth/callback/google'. This should match the authorized redirect URI you set in your Google OAuth 2.0 credentials."
         }
       ]
     },
@@ -143,6 +148,28 @@
           "details": "The ID of the Loops form you want to use, found in the Loops dashboard when viewing your form settings.",
           "required": false
         }
+      ]
+    },
+    {
+      "title": "Google Authentication",
+      "instructions": "Set up Google OAuth 2.0 credentials for authentication. Follow the guide at https://support.google.com/cloud/answer/6158849?hl=en to create a new project and set up OAuth 2.0 credentials.",
+      "variables": [
+        {
+          "name": "AUTH_GOOGLE_ID",
+          "envFiles": ["packages/backend/.env"],
+          "details": "The client ID from your Google OAuth 2.0 credentials. You can find this in the Google Cloud Console under 'APIs & Services' > 'Credentials'."
+        },
+        {
+          "name": "AUTH_GOOGLE_SECRET",
+          "envFiles": ["packages/backend/.env"],
+          "details": "The client secret from your Google OAuth 2.0 credentials. You can find this in the Google Cloud Console under 'APIs & Services' > 'Credentials'."
+        }
+      ],
+      "additionalInstructions": [
+        "When setting up your Google OAuth 2.0 credentials, you'll need to provide an authorized redirect URI.",
+        "Use your Convex deployment's HTTP Actions URL with the path '/api/auth/callback/google'.",
+        "For example: 'https://your-convex-deployment.convex.site/api/auth/callback/google'",
+        "You can find your Convex deployment's HTTP Actions URL in the Convex dashboard under 'Settings' > 'URL & Deploy Key'."
       ]
     }
   ]

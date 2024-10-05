@@ -11,6 +11,8 @@ export const env = createEnv({
     RESEND_API_KEY: z.string().min(1),
     RESEND_SENDER_EMAIL_AUTH: z.optional(z.string().email()),
     SITE_URL: z.string().url(),
+    AUTH_GOOGLE_ID: z.string().min(1),
+    AUTH_GOOGLE_SECRET: z.string().min(1),
   },
   runtimeEnv: {
     CONVEX_SITE_URL: process.env.CONVEX_SITE_URL,
@@ -21,6 +23,8 @@ export const env = createEnv({
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     RESEND_SENDER_EMAIL_AUTH: process.env.RESEND_SENDER_EMAIL_AUTH,
     SITE_URL: process.env.SITE_URL,
+    AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
+    AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
   },
   skipValidation: !!process.env.CI || !!process.env.SKIP_ENV_VALIDATION,
 });
