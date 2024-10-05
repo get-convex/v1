@@ -261,16 +261,11 @@ async function createNewProject(projectName: string): Promise<void> {
           });
 
           child.on("exit", (code) => {
-            if (code === 0 || code === 1) {
-              logger.log(
-                chalk.yellow(
-                  "\nNote: The authentication setup process exited as expected. This is normal at this stage due to missing environment variables.",
-                ),
-              );
+            if (code === 0) {
               resolve();
             } else {
               reject(
-                new Error(`Authentication setup exited with code ${code}`),
+                new Error(`Authentication setup failed with code ${code}`),
               );
             }
           });
