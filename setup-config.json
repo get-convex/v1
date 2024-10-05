@@ -111,7 +111,8 @@
         {
           "name": "SITE_URL",
           "envFiles": ["packages/backend/.env"],
-          "details": "This should be the full URL of your deployed site, e.g., 'https://yourdomain.com'. For local development, you can use 'http://localhost:3000'."
+          "details": "This should be the full URL of your deployed site, e.g., 'https://yourdomain.com'. For local development, you can use 'http://localhost:3000'.",
+          "defaultValue": "http://localhost:3000"
         }
       ]
     },

@@ -9,6 +9,7 @@ interface EnvVariable {
   envFiles: string[];
   details: string;
   required?: boolean;
+  defaultValue?: string;
 }
 
 interface SetupStep {
@@ -29,12 +30,24 @@ const rl = readline.createInterface({
 
 function question(query: string, defaultValue?: string): Promise<string> {
   const defaultPrompt = defaultValue ? ` (${defaultValue})` : "";
+  const skipPrompt = defaultValue
+    ? " or 'skip' to skip"
+    : ", hit enter to skip";
   return new Promise((resolve) => {
-    rl.question(chalk.cyan(`${query}${defaultPrompt}: `), (answer) => {
-      resolve(
-        answer.toLowerCase() === "skip" ? "SKIP" : answer || defaultValue || "",
-      );
-    });
+    rl.question(
+      chalk.cyan(`${query}${defaultPrompt}${skipPrompt}: `),
+      (answer) => {
+        if (!answer && !defaultValue) {
+          resolve("SKIP");
+        } else {
+          resolve(
+            answer.toLowerCase() === "skip"
+              ? "SKIP"
+              : answer || defaultValue || "",
+          );
+        }
+      },
+    );
   });
 }
 
@@ -92,12 +105,12 @@ async function runSetup(): Promise<void> {
 
     for (const variable of step.variables) {
       console.log(chalk.dim(`\n${variable.details}`));
-      console.log(chalk.dim("Type 'skip' to skip this variable"));
       const existingValue = getExistingValue(variable.envFiles, variable.name);
+      const defaultValue = existingValue || variable.defaultValue;
       const requiredText = variable.required === false ? " (optional)" : "";
       const value = await question(
         `Enter ${chalk.bold(variable.name)}${requiredText}`,
-        existingValue,
+        defaultValue,
       );
       if (value !== "SKIP") {
         if (value || variable.required !== false) {
