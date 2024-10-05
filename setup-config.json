@@ -7,7 +7,8 @@
       "variables": [
         {
           "name": "NEXT_PUBLIC_CONVEX_URL",
-          "envFiles": ["apps/web/.env", "apps/app/.env"]
+          "envFiles": ["apps/web/.env", "apps/app/.env"],
+          "details": "You can find your Convex DeploymentURL in the Convex dashboard under 'Settings' > 'URL & Deploy Key'. It should look like 'https://example-123.convex.cloud'."
         }
       ]
     },
@@ -16,12 +17,14 @@
       "instructions": "Create an account at https://openpanel.dev and get your client ID and secret key.",
       "variables": [
         {
-          "name": "NEXT_PUBLIC_OPENPANEL_CLIENT_ID",
-          "envFiles": ["apps/web/.env", "apps/app/.env"]
+          "name": "OPENPANEL_SECRET_KEY",
+          "envFiles": ["apps/app/.env"],
+          "details": "In the OpenPanel dashboard under 'Settings' > 'Projects', you have to create a new project to get a secret key, if you don't already have one. It starts with 'sec_'."
         },
         {
-          "name": "OPENPANEL_SECRET_KEY",
-          "envFiles": ["apps/app/.env"]
+          "name": "NEXT_PUBLIC_OPENPANEL_CLIENT_ID",
+          "envFiles": ["apps/web/.env", "apps/app/.env"],
+          "details": "The client ID is on the same page as the secret key, under 'Settings' > 'Projects'."
         }
       ]
     },
@@ -31,7 +34,8 @@
       "variables": [
         {
           "name": "NEXT_PUBLIC_SENTRY_DSN",
-          "envFiles": ["apps/app/.env"]
+          "envFiles": ["apps/app/.env"],
+          "details": "You can find your Sentry DSN in the Sentry dashboard under 'Settings' > 'Projects' > [Your Project] > 'Client Keys (DSN)'. It should look like 'https://examplePublicKey@o0.ingest.sentry.io/0'."
         }
       ]
     },
@@ -41,11 +45,13 @@
       "variables": [
         {
           "name": "RESEND_API_KEY",
-          "envFiles": ["packages/backend/.env"]
+          "envFiles": ["packages/backend/.env"],
+          "details": "Find your API key in the Resend dashboard under 'API Keys'. It starts with 're_'."
         },
         {
           "name": "RESEND_SENDER_EMAIL_AUTH",
-          "envFiles": ["packages/backend/.env"]
+          "envFiles": ["packages/backend/.env"],
+          "details": "This should be the email address you want to use as the sender for authentication emails. Make sure it's verified in your Resend account under 'Domains'."
         }
       ]
     },
@@ -55,15 +61,18 @@
       "variables": [
         {
           "name": "POLAR_ACCESS_TOKEN",
-          "envFiles": ["packages/backend/.env"]
+          "envFiles": ["packages/backend/.env"],
+          "details": "Generate an access token in the Polar dashboard under 'Settings' > 'API'. Make sure to give it the necessary permissions."
         },
         {
           "name": "POLAR_ORGANIZATION_ID",
-          "envFiles": ["packages/backend/.env"]
+          "envFiles": ["packages/backend/.env"],
+          "details": "Find your Organization ID in the Polar dashboard under 'Settings' > 'General'. It's usually a string of numbers and letters."
         },
         {
           "name": "POLAR_WEBHOOK_SECRET",
-          "envFiles": ["packages/backend/.env"]
+          "envFiles": ["packages/backend/.env"],
+          "details": "Create a webhook in the Polar dashboard under 'Settings' > 'Webhooks'. The secret will be provided when you create the webhook."
         }
       ]
     },
@@ -73,7 +82,8 @@
       "variables": [
         {
           "name": "NEXT_PUBLIC_CAL_LINK",
-          "envFiles": ["apps/web/.env"]
+          "envFiles": ["apps/web/.env"],
+          "details": "This is your public Cal.com link. It should look like 'https://cal.com/yourusername' or your custom domain if you've set one up."
         }
       ]
     },
@@ -83,7 +93,8 @@
       "variables": [
         {
           "name": "SITE_URL",
-          "envFiles": ["packages/backend/.env"]
+          "envFiles": ["packages/backend/.env"],
+          "details": "This should be the full URL of your deployed site, e.g., 'https://yourdomain.com'. For local development, you can use 'http://localhost:3000'."
         }
       ]
     }

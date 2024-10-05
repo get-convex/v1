@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 interface EnvVariable {
   name: string;
   envFiles: string[];
+  details: string;
 }
 
 interface SetupStep {
@@ -41,7 +42,11 @@ function loadConfig(): SetupConfig {
 
 function updateEnvFile(filePath: string, key: string, value: string): void {
   let envContent = "";
-  envContent = fs.readFileSync(filePath, "utf-8");
+  try {
+    envContent = fs.readFileSync(filePath, "utf-8");
+  } catch (error) {
+    // File doesn't exist, we'll create it
+  }
 
   const envConfig = dotenv.parse(envContent);
   envConfig[key] = value;
@@ -67,6 +72,7 @@ async function runSetup(): Promise<void> {
     console.log(chalk.italic(step.instructions));
 
     for (const variable of step.variables) {
+      console.log(chalk.dim(`\n${variable.details}`));
       const value = await question(`Enter ${chalk.bold(variable.name)}: `);
       for (const envFile of variable.envFiles) {
         updateEnvFile(envFile, variable.name, value);
