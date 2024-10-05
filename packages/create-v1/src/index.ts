@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import { execSync } from "node:child_process";
-import fs from "node:fs";
 import path from "node:path";
 import { program } from "commander";
 import inquirer from "inquirer";
@@ -27,7 +26,9 @@ async function main() {
       console.log(`Creating a new v1 project in ${projectDir}...`);
 
       // Clone the repository
-      execSync(`bunx degit erquhart/v1-convex ${projectDir}`);
+      execSync(`bunx degit erquhart/v1-convex ${projectDir}`, {
+        stdio: "inherit",
+      });
 
       // Change to project directory
       process.chdir(projectDir);
@@ -45,7 +46,13 @@ async function main() {
       // Set up Convex backend
       console.log("Setting up Convex backend...");
       process.chdir("packages/backend");
-      execSync("npm run setup", { stdio: "inherit" });
+      try {
+        execSync("npm run setup", { stdio: "inherit" });
+      } catch (error) {
+        console.error(
+          "Convex setup command failed. This error is expected during initial setup. Continuing...",
+        );
+      }
 
       // Set up authentication
       console.log("Setting up authentication...");
@@ -65,4 +72,8 @@ async function main() {
   await program.parseAsync(process.argv);
 }
 
-main().catch(console.error);
+main().catch((error) => {
+  console.error("An error occurred during project setup:");
+  console.error(error);
+  process.exit(1);
+});
