@@ -134,6 +134,9 @@ Follow these steps to set up your project:
 
 ## Detailed Service Setup Instructions
 
+<details>
+<summary>Click to expand detailed setup instructions</summary>
+
 If you choose to manually set up services and environment variables, follow these steps for each service:
 
 ### Convex
@@ -262,3 +265,4 @@ If you choose to manually set up services and environment variables, follow thes
 After setting up all the required services and environment variables, proceed to step 7 in the Getting Started section to copy the Convex environment variables to your Convex dashboard.
 
 For more detailed information on each component, refer to their respective documentation linked in the "What's included" section above.
+</details>
