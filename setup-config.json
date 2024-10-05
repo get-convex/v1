@@ -30,12 +30,27 @@
     },
     {
       "title": "Sentry",
-      "instructions": "Set up a project on https://sentry.io and obtain your DSN.",
+      "instructions": "Set up a project on https://sentry.io and obtain your DSN and other required information.",
       "variables": [
         {
           "name": "NEXT_PUBLIC_SENTRY_DSN",
           "envFiles": ["apps/app/.env"],
           "details": "You can find your Sentry DSN in the Sentry dashboard under 'Settings' > 'Projects' > [Your Project] > 'Client Keys (DSN)'. It should look like 'https://examplePublicKey@o0.ingest.sentry.io/0'."
+        },
+        {
+          "name": "SENTRY_AUTH_TOKEN",
+          "envFiles": ["apps/app/.env"],
+          "details": "Generate an auth token in the Sentry dashboard under 'Settings' > 'Account' > 'API Keys'."
+        },
+        {
+          "name": "SENTRY_ORG",
+          "envFiles": ["apps/app/.env"],
+          "details": "Your Sentry organization slug, found in the URL when you're in your Sentry dashboard."
+        },
+        {
+          "name": "SENTRY_PROJECT",
+          "envFiles": ["apps/app/.env"],
+          "details": "Your Sentry project name or ID, found in the project settings."
         }
       ]
     },
@@ -97,6 +112,55 @@
           "name": "SITE_URL",
           "envFiles": ["packages/backend/.env"],
           "details": "This should be the full URL of your deployed site, e.g., 'https://yourdomain.com'. For local development, you can use 'http://localhost:3000'."
+        }
+      ]
+    },
+    {
+      "title": "Dub",
+      "instructions": "Set up an account at https://dub.sh for sharable links.",
+      "variables": [
+        {
+          "name": "NEXT_PUBLIC_DUB_URL",
+          "envFiles": ["apps/app/.env"],
+          "details": "Your Dub project URL, typically in the format 'https://your-project.dub.sh'."
+        },
+        {
+          "name": "DUB_API_KEY",
+          "envFiles": ["apps/app/.env"],
+          "details": "Your Dub API key, found in your Dub dashboard under API settings."
+        }
+      ]
+    },
+    {
+      "title": "OpenAI",
+      "instructions": "Set up an account at https://openai.com and obtain an API key.",
+      "variables": [
+        {
+          "name": "OPENAI_API_KEY",
+          "envFiles": ["apps/app/.env"],
+          "details": "Your OpenAI API key, found in the OpenAI dashboard under 'API Keys'."
+        }
+      ]
+    },
+    {
+      "title": "Convex",
+      "instructions": "Additional Convex configuration.",
+      "variables": [
+        {
+          "name": "CONVEX_SITE_URL",
+          "envFiles": ["packages/backend/.env"],
+          "details": "The URL of your Convex deployment, typically the same as NEXT_PUBLIC_CONVEX_URL but without the 'https://' prefix."
+        }
+      ]
+    },
+    {
+      "title": "Loops",
+      "instructions": "Set up an account at https://loops.so for form handling.",
+      "variables": [
+        {
+          "name": "LOOPS_FORM_ID",
+          "envFiles": ["packages/backend/.env"],
+          "details": "The ID of the Loops form you want to use, found in the Loops dashboard when viewing your form settings."
         }
       ]
     }
