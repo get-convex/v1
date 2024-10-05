@@ -72,14 +72,39 @@ To install Bun, please follow the official installation instructions:
 
 [Bun Installation Guide](https://bun.sh/docs/installation)
 
-After installation, make sure you have Bun version 1.0.0 or higher. You can check your Bun version by running:
-
-```bash
-```
 
 ## Getting Started
 
-Follow these steps to set up your project:
+You have two options to create a new v1 project:
+
+### Option 1: Using the CLI (Recommended)
+
+To create a new v1 project using our CLI tool, run:
+
+```bash
+npm create v1@latest
+```
+
+This command will guide you through the process of setting up your project, including:
+
+1. Creating a new directory for your project
+2. Cloning the v1 repository
+3. Installing dependencies
+4. Initializing a git repository
+5. Setting up the Convex backend
+6. Configuring authentication
+7. Setting up environment variables
+
+After the setup is complete, you can start your development server by running:
+
+```bash
+cd your-project-name
+bun dev
+```
+
+### Option 2: Manual Setup
+
+If you prefer to set up the project manually, follow these steps:
 
 1. Clone the repository:
    ```bash
