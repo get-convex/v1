@@ -88,8 +88,11 @@
         {
           "name": "POLAR_WEBHOOK_SECRET",
           "envFiles": ["packages/backend/.env"],
-          "details": "Create a webhook in the Polar dashboard under 'Settings' > 'Webhooks'. The secret will be provided when you create the webhook. The webhook should point to the HTTP Actions URL of your Convex deployment, which you can find under 'Settings' > 'URL & Deploy Key'. The payload format should be 'Raw'. You can provide your own secret or use the 'Generate' option. Events to select are subscription.created and subscription.updated."
+          "details": "Create a webhook in the Polar dashboard under 'Settings' > 'Webhooks'. The secret will be provided when you create the webhook. The webhook should point to the HTTP Actions URL of your Convex deployment with the path '/events/polar', it should look like 'https://your-convex-deployment.convex.site/events/polar'. You can find your Convex deployment's HTTP Actions URL under 'Settings' > 'URL & Deploy Key'. The payload format should be 'Raw'. You can provide your own secret or use the 'Generate' option. Events to select are subscription.created and subscription.updated."
         }
+      ],
+      "additionalInstructions": [
+        "If you're just testing, be sure to switch to Sandbox via the top left dropdown in the dashboard before proceeding."
       ]
     },
     {
