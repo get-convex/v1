@@ -51,7 +51,8 @@
         {
           "name": "RESEND_SENDER_EMAIL_AUTH",
           "envFiles": ["packages/backend/.env"],
-          "details": "This should be the email address you want to use as the sender for authentication emails. Make sure it's verified in your Resend account under 'Domains'."
+          "details": "This should be the email address you want to use as the sender for authentication emails. Make sure it's verified in your Resend account under 'Domains'. If not provided, you'll only be able to send emails to the address on your Resend account.",
+          "required": false
         }
       ]
     },
@@ -83,7 +84,8 @@
         {
           "name": "NEXT_PUBLIC_CAL_LINK",
           "envFiles": ["apps/web/.env"],
-          "details": "This is your public Cal.com link. It should look like 'https://cal.com/yourusername' or your custom domain if you've set one up."
+          "details": "This is your public Cal.com link. It should look like 'https://cal.com/yourusername' or your custom domain if you've set one up.",
+          "required": false
         }
       ]
     },

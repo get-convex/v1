@@ -8,6 +8,7 @@ interface EnvVariable {
   name: string;
   envFiles: string[];
   details: string;
+  required?: boolean;
 }
 
 interface SetupStep {
@@ -85,17 +86,20 @@ async function runSetup(): Promise<void> {
 
   for (const [index, step] of config.steps.entries()) {
     console.log(chalk.bold.blue(`\nStep ${index + 1}: ${step.title}`));
-    console.log(chalk.italic(step.instructions));
+    console.log(step.instructions);
 
     for (const variable of step.variables) {
       console.log(chalk.dim(`\n${variable.details}`));
       const existingValue = getExistingValue(variable.envFiles, variable.name);
+      const requiredText = variable.required === false ? " (optional)" : "";
       const value = await question(
-        `Enter ${chalk.bold(variable.name)}`,
+        `Enter ${chalk.bold(variable.name)}${requiredText}`,
         existingValue,
       );
-      for (const envFile of variable.envFiles) {
-        updateEnvFile(envFile, variable.name, value);
+      if (value || variable.required !== false) {
+        for (const envFile of variable.envFiles) {
+          updateEnvFile(envFile, variable.name, value);
+        }
       }
     }
 
