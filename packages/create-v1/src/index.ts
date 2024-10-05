@@ -246,6 +246,57 @@ async function createNewProject(projectName: string): Promise<void> {
       },
     },
     {
+      title: "Retrieving Convex URL",
+      task: async (spinner: Ora) => {
+        spinner.stop();
+        return new Promise<void>((resolve, reject) => {
+          exec("npx convex function-spec", (error, stdout, stderr) => {
+            if (error) {
+              reject(
+                new Error(`Failed to retrieve Convex URL: ${error.message}`),
+              );
+              return;
+            }
+            try {
+              const functionSpec = JSON.parse(stdout);
+              const convexUrl = functionSpec.url;
+              if (!convexUrl) {
+                reject(
+                  new Error("Convex URL not found in function-spec output"),
+                );
+                return;
+              }
+
+              // Update the environment files with the Convex URL
+              updateEnvFile(
+                path.join(projectDir, "apps/web/.env"),
+                "NEXT_PUBLIC_CONVEX_URL",
+                convexUrl,
+              );
+              updateEnvFile(
+                path.join(projectDir, "apps/app/.env"),
+                "NEXT_PUBLIC_CONVEX_URL",
+                convexUrl,
+              );
+
+              console.log(
+                chalk.green(
+                  `\nConvex URL (${convexUrl}) has been automatically set in your .env files.`,
+                ),
+              );
+              resolve();
+            } catch (parseError) {
+              reject(
+                new Error(
+                  `Failed to parse function-spec output: ${parseError.message}`,
+                ),
+              );
+            }
+          });
+        });
+      },
+    },
+    {
       title: "Setting up authentication",
       task: async (spinner: Ora) => {
         printBox(
