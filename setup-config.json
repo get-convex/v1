@@ -8,7 +8,9 @@
         {
           "name": "NEXT_PUBLIC_CONVEX_URL",
           "envFiles": ["apps/web/.env", "apps/app/.env"],
-          "details": "You can find your Convex DeploymentURL in the Convex dashboard under 'Settings' > 'URL & Deploy Key'. It should look like 'https://example-123.convex.cloud'."
+          "details": "You can find your Convex DeploymentURL in the Convex dashboard under 'Settings' > 'URL & Deploy Key'. It should look like 'https://example-123.convex.cloud'.",
+          "template": "{{convexUrl}}",
+          "defaultValue": "https://example-123.convex.cloud"
         }
       ]
     },

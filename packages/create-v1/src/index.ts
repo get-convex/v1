@@ -3,6 +3,8 @@
 import { type ExecException, exec, spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import boxen from "boxen";
 import chalk from "chalk";
 import { program } from "commander";
@@ -17,6 +19,7 @@ interface EnvVariable {
   details: string;
   required?: boolean;
   defaultValue?: string;
+  template?: string;
 }
 
 interface SetupStep {
@@ -31,8 +34,13 @@ interface SetupConfig {
   steps: SetupStep[];
 }
 
-function loadConfig(projectDir: string): SetupConfig {
-  const configPath = path.join(projectDir, "setup-config.json");
+interface Values {
+  convexUrl: string;
+  convexSiteUrl: string;
+}
+
+function loadConfig(configPath: string): SetupConfig {
+  console.log("Loading config from:", configPath);
   const configContent = fs.readFileSync(configPath, "utf-8");
   return JSON.parse(configContent) as SetupConfig;
 }
@@ -106,8 +114,12 @@ function createLogger() {
 
 const logger = createLogger();
 
-async function setupEnvironment(projectDir: string): Promise<void> {
-  const config = loadConfig(projectDir);
+async function setupEnvironment(
+  projectDir: string,
+  values: Values,
+  configPath: string,
+): Promise<void> {
+  const config = loadConfig(configPath);
 
   console.log(
     chalk.bold.cyan("\n🚀 Welcome to the v1 Environment Setup Wizard"),
@@ -133,8 +145,17 @@ async function setupEnvironment(projectDir: string): Promise<void> {
         variable.envFiles.map((file) => path.join(projectDir, file)),
         variable.name,
       );
-      const defaultValue = existingValue || variable.defaultValue;
+      let templateValue = "";
+      if (variable.template) {
+        templateValue = variable.template.replace(
+          /{{(\w+)}}/g,
+          (_, key) => values[key as keyof Values] || "",
+        );
+      }
+      const defaultValue =
+        existingValue || templateValue || variable.defaultValue;
       const requiredText = variable.required === false ? " (optional)" : "";
+      const defaultValueText = defaultValue ? ` (${defaultValue})` : "";
       const answer = await inquirer.prompt([
         {
           type: "input",
@@ -144,14 +165,15 @@ async function setupEnvironment(projectDir: string): Promise<void> {
         },
       ]);
 
-      if (answer.value || variable.required !== false) {
+      const value = answer.value;
+
+      if (value || variable.required !== false) {
         for (const envFile of variable.envFiles) {
-          updateEnvFile(
-            path.join(projectDir, envFile),
-            variable.name,
-            answer.value,
-          );
+          updateEnvFile(path.join(projectDir, envFile), variable.name, value);
         }
+        console.log(chalk.green(`✅ Set ${variable.name}`));
+      } else {
+        console.log(chalk.yellow(`⚠️ Skipped ${variable.name}`));
       }
     }
 
@@ -165,12 +187,21 @@ async function setupEnvironment(projectDir: string): Promise<void> {
   );
 }
 
-async function createNewProject(projectName: string): Promise<void> {
+async function createNewProject(
+  projectName: string,
+  useDevConfig: boolean,
+  devConfigPath?: string,
+): Promise<void> {
   const projectDir = path.resolve(process.cwd(), projectName);
 
   logger.log(
     chalk.bold.cyan(`\n🚀 Creating a new v1 project in ${projectDir}...\n`),
   );
+
+  const values: Values = {
+    convexUrl: "",
+    convexSiteUrl: "",
+  };
 
   const tasks = [
     {
@@ -267,22 +298,11 @@ async function createNewProject(projectName: string): Promise<void> {
                 return;
               }
 
-              // Update the environment files with the Convex URL
-              updateEnvFile(
-                path.join(projectDir, "apps/web/.env"),
-                "NEXT_PUBLIC_CONVEX_URL",
-                convexUrl,
-              );
-              updateEnvFile(
-                path.join(projectDir, "apps/app/.env"),
-                "NEXT_PUBLIC_CONVEX_URL",
-                convexUrl,
-              );
+              values.convexUrl = convexUrl;
+              values.convexSiteUrl = convexUrl.replace(".cloud", ".site");
 
               console.log(
-                chalk.green(
-                  `\nConvex URL (${convexUrl}) has been automatically set in your .env files.`,
-                ),
+                chalk.green("\nConvex URLs have been retrieved and stored."),
               );
               resolve();
             } catch (parseError) {
@@ -349,7 +369,21 @@ async function createNewProject(projectName: string): Promise<void> {
   process.chdir("../..");
 
   // Setup environment variables
-  await setupEnvironment(projectDir);
+  let configPath: string;
+  if (useDevConfig && devConfigPath) {
+    configPath = devConfigPath;
+  } else {
+    configPath = path.join(projectDir, "setup-config.json");
+  }
+
+  if (!fs.existsSync(configPath)) {
+    console.error(
+      chalk.red(`Error: setup-config.json not found at ${configPath}`),
+    );
+    process.exit(1);
+  }
+
+  await setupEnvironment(projectDir, values, configPath);
 
   console.log(chalk.bold.green("\n🎉 Project setup complete!"));
   console.log(chalk.cyan("\nTo start your development server:"));
@@ -360,62 +394,93 @@ async function createNewProject(projectName: string): Promise<void> {
 async function main() {
   console.log(chalk.bold.cyan("\n🌟 Welcome to Create v1"));
 
+  const currentFileUrl = import.meta.url;
+  const currentFilePath = fileURLToPath(currentFileUrl);
+  const currentDir = dirname(currentFilePath);
+
   program
     .name("create-v1")
     .description("Create a new v1 project or manage environment variables")
     .argument("[project-name]", "Name of the new project")
-    .action(async (projectName: string | undefined) => {
-      if (!projectName) {
-        const { action } = await inquirer.prompt<{ action: string }>([
-          {
-            type: "list",
-            name: "action",
-            message: "What would you like to do?",
-            choices: [
-              { name: "Create a new v1 project", value: "create" },
-              {
-                name: "Manage environment variables for an existing project",
-                value: "env",
-              },
-            ],
-          },
-        ]);
+    .option("--dev", "Use development mode with local config")
+    .action(
+      async (projectName: string | undefined, options: { dev?: boolean }) => {
+        const useDevConfig = options.dev ?? false;
+        let devConfigPath: string | undefined;
 
-        if (action === "create") {
-          const { projectName } = await inquirer.prompt<{
-            projectName: string;
-          }>([
-            {
-              type: "input",
-              name: "projectName",
-              message: "What is your project named?",
-              default: "my-v1-project",
-            },
-          ]);
-          await createNewProject(projectName);
-        } else {
-          // Manage environment variables for an existing project
-          const currentDir = process.cwd();
-          if (!fs.existsSync(path.join(currentDir, "setup-config.json"))) {
+        if (useDevConfig) {
+          devConfigPath = path.join(process.cwd(), "setup-config.json");
+          console.log(chalk.yellow("\n⚠️ Using development configuration"));
+          console.log(chalk.yellow(`Config path: ${devConfigPath}`));
+
+          if (!fs.existsSync(devConfigPath)) {
             console.error(
               chalk.red(
-                "Error: This doesn't appear to be a v1 project directory.",
-              ),
-            );
-            console.error(
-              chalk.red(
-                "Please run this command from the root of your v1 project.",
+                `Error: setup-config.json not found at ${devConfigPath}`,
               ),
             );
             process.exit(1);
           }
-          await setupEnvironment(currentDir);
         }
-      } else {
-        // If a project name is provided, create a new project
-        await createNewProject(projectName);
-      }
-    });
+
+        if (!projectName) {
+          const { action } = await inquirer.prompt<{ action: string }>([
+            {
+              type: "list",
+              name: "action",
+              message: "What would you like to do?",
+              choices: [
+                { name: "Create a new v1 project", value: "create" },
+                {
+                  name: "Manage environment variables for an existing project",
+                  value: "env",
+                },
+              ],
+            },
+          ]);
+
+          if (action === "create") {
+            const { projectName } = await inquirer.prompt<{
+              projectName: string;
+            }>([
+              {
+                type: "input",
+                name: "projectName",
+                message: "What is your project named?",
+                default: "my-v1-project",
+              },
+            ]);
+            await createNewProject(projectName, useDevConfig, devConfigPath);
+          } else {
+            // Manage environment variables for an existing project
+            const configPath = useDevConfig
+              ? devConfigPath!
+              : path.join(process.cwd(), "setup-config.json");
+
+            if (!fs.existsSync(configPath)) {
+              console.error(
+                chalk.red(
+                  `Error: setup-config.json not found at ${configPath}`,
+                ),
+              );
+              process.exit(1);
+            }
+
+            await setupEnvironment(
+              process.cwd(),
+              {
+                convexUrl: "",
+                convexSiteUrl: "",
+              },
+              configPath,
+            );
+          }
+        } else {
+          // If a project name is provided, create a new project
+          await createNewProject(projectName, useDevConfig, devConfigPath);
+        }
+      },
+    );
 
   await program.parseAsync(process.argv);
 }
