@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "dev": "convex dev --tail-logs",
-    "setup": "convex dev --run init --until-success"
+    "setup": "convex dev --run init --once"
   },
   "type": "module",
   "author": "",
