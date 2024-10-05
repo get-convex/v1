@@ -30,24 +30,14 @@ const rl = readline.createInterface({
 
 function question(query: string, defaultValue?: string): Promise<string> {
   const defaultPrompt = defaultValue ? ` (${defaultValue})` : "";
-  const skipPrompt = defaultValue
-    ? " or 'skip' to skip"
-    : ", hit enter to skip";
   return new Promise((resolve) => {
-    rl.question(
-      chalk.cyan(`${query}${defaultPrompt}${skipPrompt}: `),
-      (answer) => {
-        if (!answer && !defaultValue) {
-          resolve("SKIP");
-        } else {
-          resolve(
-            answer.toLowerCase() === "skip"
-              ? "SKIP"
-              : answer || defaultValue || "",
-          );
-        }
-      },
-    );
+    rl.question(chalk.cyan(`${query}${defaultPrompt}: `), (answer) => {
+      if (!answer && !defaultValue) {
+        resolve("SKIP");
+      } else {
+        resolve(answer || defaultValue || "");
+      }
+    });
   });
 }
 

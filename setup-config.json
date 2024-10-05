@@ -73,22 +73,22 @@
     },
     {
       "title": "Polar",
-      "instructions": "Set up an account at https://polar.sh for billing (coming soon) and obtain your access token and organization ID.",
+      "instructions": "Set up an account at https://polar.sh for billing and obtain your access token and organization ID.",
       "variables": [
         {
           "name": "POLAR_ACCESS_TOKEN",
           "envFiles": ["packages/backend/.env"],
-          "details": "Generate an access token in the Polar dashboard under 'Settings' > 'API'. Make sure to give it the necessary permissions."
+          "details": "Generate a personal access token in the Polar dashboard under 'Account' > 'Developer settings'. Required permissions: 'products:read', 'products:write', 'subscriptions:read'."
         },
         {
           "name": "POLAR_ORGANIZATION_ID",
           "envFiles": ["packages/backend/.env"],
-          "details": "Find your Organization ID in the Polar dashboard under 'Settings' > 'General'. It's usually a string of numbers and letters."
+          "details": "Find your Organization ID in the Polar dashboard under 'Settings'."
         },
         {
           "name": "POLAR_WEBHOOK_SECRET",
           "envFiles": ["packages/backend/.env"],
-          "details": "Create a webhook in the Polar dashboard under 'Settings' > 'Webhooks'. The secret will be provided when you create the webhook."
+          "details": "Create a webhook in the Polar dashboard under 'Settings' > 'Webhooks'. The secret will be provided when you create the webhook. The webhook should point to the HTTP Actions URL of your Convex deployment, which you can find under 'Settings' > 'URL & Deploy Key'. The payload format should be 'Raw'. You can provide your own secret or use the 'Generate' option. Events to select are subscription.created and subscription.updated."
         }
       ]
     },
@@ -101,18 +101,6 @@
           "envFiles": ["apps/web/.env"],
           "details": "This is your public Cal.com link. It should look like 'https://cal.com/yourusername' or your custom domain if you've set one up.",
           "required": false
-        }
-      ]
-    },
-    {
-      "title": "Site URL",
-      "instructions": "Enter the URL where your site will be hosted.",
-      "variables": [
-        {
-          "name": "SITE_URL",
-          "envFiles": ["packages/backend/.env"],
-          "details": "This should be the full URL of your deployed site, e.g., 'https://yourdomain.com'. For local development, you can use 'http://localhost:3000'.",
-          "defaultValue": "http://localhost:3000"
         }
       ]
     },
