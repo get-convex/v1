@@ -4,12 +4,12 @@ import { z } from "zod";
 export const env = createEnv({
   server: {
     CONVEX_SITE_URL: z.string().url(),
-    LOOPS_FORM_ID: z.string().min(1),
+    LOOPS_FORM_ID: z.optional(z.string().min(1)),
     POLAR_ACCESS_TOKEN: z.string().min(1),
     POLAR_ORGANIZATION_ID: z.string().min(1),
     POLAR_WEBHOOK_SECRET: z.string().min(1),
     RESEND_API_KEY: z.string().min(1),
-    RESEND_SENDER_EMAIL_AUTH: z.string().email(),
+    RESEND_SENDER_EMAIL_AUTH: z.optional(z.string().email()),
     SITE_URL: z.string().url(),
   },
   runtimeEnv: {
