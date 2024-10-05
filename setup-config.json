@@ -1,0 +1,29 @@
+{
+  "introMessage": "Welcome to the environment setup wizard. This will guide you through setting up various services and adding the necessary environment variables.",
+  "steps": [
+    {
+      "title": "Dub.co",
+      "instructions": "Head over to https://dub.co to set up an account.",
+      "variables": [
+        {
+          "name": "NEXT_PUBLIC_DUB_URL",
+          "envFiles": ["apps/web/.env", "apps/app/.env"]
+        },
+        {
+          "name": "DUB_API_KEY",
+          "envFiles": ["apps/web/.env", "apps/app/.env"]
+        }
+      ]
+    },
+    {
+      "title": "OpenAI",
+      "instructions": "Visit https://platform.openai.com to create an API key.",
+      "variables": [
+        {
+          "name": "OPENAI_API_KEY",
+          "envFiles": ["apps/web/.env", "apps/app/.env"]
+        }
+      ]
+    }
+  ]
+}
