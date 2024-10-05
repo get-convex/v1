@@ -123,22 +123,6 @@
       ]
     },
     {
-      "title": "Convex",
-      "instructions": "Additional Convex configuration.",
-      "variables": [
-        {
-          "name": "CONVEX_SITE_URL",
-          "envFiles": ["packages/backend/.env"],
-          "details": "The URL of your Convex deployment, typically the same as NEXT_PUBLIC_CONVEX_URL but without the 'https://' prefix."
-        },
-        {
-          "name": "CONVEX_AUTH_CALLBACK_URL",
-          "envFiles": ["packages/backend/.env"],
-          "details": "The full HTTP Actions URL of your Convex deployment with the path '/api/auth/callback/google'. This should match the authorized redirect URI you set in your Google OAuth 2.0 credentials."
-        }
-      ]
-    },
-    {
       "title": "Loops",
       "instructions": "Set up an account at https://loops.so for form handling.",
       "variables": [
