@@ -20,7 +20,7 @@ interface EnvVariable {
   required?: boolean;
   defaultValue?: string;
   template?: string;
-  alerts?: string[];
+  info?: string[]; // Changed from alerts to info
 }
 
 interface SetupStep {
@@ -270,26 +270,26 @@ async function setupEnvironment(
     }
 
     for (const variable of step.variables) {
-      console.log(chalk.dim(`\n${variable.details}`));
+      // Make details more prominent
+      console.log(chalk.cyan(`\n${variable.details}`));
 
-      if (variable.alerts) {
-        for (const alert of variable.alerts) {
-          const processedAlert = alert.replace(
+      if (variable.info) {
+        for (const infoItem of variable.info) {
+          const processedInfo = infoItem.replace(
             /\{\{(\w+)\}\}/g,
             (_, key) => values[key as keyof Values] || `[${key} not set]`,
           );
           console.log(
-            boxen(chalk.bold(processedAlert), {
-              padding: 1,
-              margin: 1,
-              borderColor: "yellow",
+            boxen(chalk.blue(processedInfo), {
+              padding: 0.5,
+              margin: 0.5,
+              borderColor: "blue",
               borderStyle: "round",
-              title: "⚠️  Alert",
+              title: "ℹ️  Info",
               titleAlignment: "center",
             }),
           );
         }
-        console.log(); // Add an empty line after alerts for better readability
       }
 
       const existingValue = await getExistingValue(
