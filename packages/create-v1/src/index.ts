@@ -357,6 +357,16 @@ async function setupEnvironment(
   );
 }
 
+async function promptToContinue(message: string): Promise<void> {
+  await inquirer.prompt([
+    {
+      type: "input",
+      name: "continue",
+      message: `${message}\nPress Enter to continue...`,
+    },
+  ]);
+}
+
 async function createNewProject(
   projectName: string,
   useDevConfig: boolean,
@@ -418,12 +428,11 @@ async function createNewProject(
     {
       title: "Setting up Convex backend",
       task: async (spinner: Ora) => {
-        printBox(
-          "🔧 Convex Setup",
+        spinner.stop();
+        await promptToContinue(
           "You'll now be guided through the Convex project setup process. This will create a new Convex project or link to an existing one.",
         );
 
-        spinner.stop();
         return new Promise<void>((resolve, reject) => {
           const child = spawn("npm", ["run", "setup"], {
             stdio: ["inherit", "pipe", "pipe"],
@@ -528,12 +537,11 @@ async function createNewProject(
     {
       title: "Setting up authentication",
       task: async (spinner: Ora) => {
-        printBox(
-          "🔐 Authentication Setup",
+        spinner.stop();
+        await promptToContinue(
           "You'll now be guided through the authentication setup process. This will configure authentication for your Convex project.",
         );
 
-        spinner.stop();
         return new Promise<void>((resolve, reject) => {
           const child = spawn("npx", ["@convex-dev/auth", "--skip-git-check"], {
             stdio: "inherit",
