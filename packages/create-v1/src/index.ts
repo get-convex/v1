@@ -530,6 +530,38 @@ async function createNewProject(
         });
       },
     },
+    {
+      title: "Setting up environment variables",
+      task: async () => {
+        const configPath =
+          useDevConfig && devConfigPath
+            ? devConfigPath
+            : path.join(projectDir, "setup-config.json");
+
+        if (!fs.existsSync(configPath)) {
+          throw new Error(`setup-config.json not found at ${configPath}`);
+        }
+
+        await setupEnvironment(projectDir, values, configPath);
+      },
+    },
+    {
+      title: "Seeding the database",
+      task: async () => {
+        const backendDir = path.join(projectDir, "packages", "backend");
+        return new Promise<void>((resolve, reject) => {
+          exec("npm run seed", { cwd: backendDir }, (error) => {
+            if (error) {
+              reject(
+                new Error(`Failed to seed the database: ${error.message}`),
+              );
+            } else {
+              resolve();
+            }
+          });
+        });
+      },
+    },
   ];
 
   for (const task of tasks) {
@@ -547,26 +579,6 @@ async function createNewProject(
       process.exit(1);
     }
   }
-
-  // Return to project root
-  process.chdir("../..");
-
-  // Setup environment variables
-  let configPath: string;
-  if (useDevConfig && devConfigPath) {
-    configPath = devConfigPath;
-  } else {
-    configPath = path.join(projectDir, "setup-config.json");
-  }
-
-  if (!fs.existsSync(configPath)) {
-    console.error(
-      chalk.red(`Error: setup-config.json not found at ${configPath}`),
-    );
-    process.exit(1);
-  }
-
-  await setupEnvironment(projectDir, values, configPath);
 
   console.log(chalk.bold.green("\n🎉 Project setup complete!"));
   console.log(chalk.cyan("\nTo start your development server:"));

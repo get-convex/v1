@@ -98,17 +98,17 @@
           "details": "Find your Organization ID in the Polar dashboard sidebar under 'Organization' > 'Settings'."
         },
         {
-          "name": "POLAR_ACCESS_TOKEN",
-          "projects": ["convex"],
-          "details": "Generate a personal access token in the Polar dashboard under 'Account' > 'Developer settings'. Required permissions: 'products:read', 'products:write', 'subscriptions:read'."
-        },
-        {
           "name": "POLAR_WEBHOOK_SECRET",
           "projects": ["convex"],
           "details": "Create a webhook in the Polar dashboard under 'Settings' > 'Webhooks'. The payload format should be 'Raw'. Events to select are subscription.created and subscription.updated. You can provide your own secret or use the 'Generate' option. Copy the secret and paste it here.",
           "info": [
             "Use this as your webhook URL: {{convexSiteUrl}}/events/polar"
           ]
+        },
+        {
+          "name": "POLAR_ACCESS_TOKEN",
+          "projects": ["convex"],
+          "details": "Generate a personal access token in the Polar dashboard under 'Account' > 'Developer settings'. Required permissions: 'products:read', 'products:write', 'subscriptions:read'."
         }
       ],
       "additionalInstructions": [
