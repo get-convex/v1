@@ -1,10 +1,10 @@
 {
-  "name": "create-v1",
+  "name": "test-v1",
   "version": "1.0.0",
   "description": "CLI tool to create a new v1 project",
   "main": "dist/index.js",
   "bin": {
-    "create-v1": "./dist/index.js"
+    "create-convex-v1": "./dist/index.js"
   },
   "type": "module",
   "scripts": {
