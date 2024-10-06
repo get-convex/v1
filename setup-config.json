@@ -105,7 +105,10 @@
         {
           "name": "POLAR_WEBHOOK_SECRET",
           "projects": ["convex"],
-          "details": "Create a webhook in the Polar dashboard under 'Settings' > 'Webhooks'. The secret will be provided when you create the webhook. The webhook should point to the HTTP Actions URL of your Convex deployment with the path '/events/polar', it should look like 'https://your-convex-deployment.convex.site/events/polar'. You can find your Convex deployment's HTTP Actions URL under 'Settings' > 'URL & Deploy Key'. The payload format should be 'Raw'. You can provide your own secret or use the 'Generate' option. Events to select are subscription.created and subscription.updated."
+          "details": "Create a webhook in the Polar dashboard under 'Settings' > 'Webhooks' copy the generated secret. The payload format should be 'Raw'. You can provide your own secret or use the 'Generate' option. Events to select are subscription.created and subscription.updated.",
+          "alerts": [
+            "Use this as your webhook URL: {{convexSiteUrl}}/events/polar"
+          ]
         }
       ],
       "additionalInstructions": [
@@ -161,19 +164,16 @@
         {
           "name": "AUTH_GOOGLE_ID",
           "projects": ["convex"],
-          "details": "The client ID from your Google OAuth 2.0 credentials. You can find this in the Google Cloud Console under 'APIs & Services' > 'Credentials'."
+          "details": "The client ID from your Google OAuth 2.0 credentials. You can find this in the Google Cloud Console under 'APIs & Services' > 'Credentials'.",
+          "alerts": [
+            "Use this as your authorized redirect URI: {{convexSiteUrl}}/api/auth/callback/google"
+          ]
         },
         {
           "name": "AUTH_GOOGLE_SECRET",
           "projects": ["convex"],
           "details": "The client secret from your Google OAuth 2.0 credentials. You can find this in the Google Cloud Console under 'APIs & Services' > 'Credentials'."
         }
-      ],
-      "additionalInstructions": [
-        "When setting up your Google OAuth 2.0 credentials, you'll need to provide an authorized redirect URI.",
-        "Use your Convex deployment's HTTP Actions URL with the path '/api/auth/callback/google'.",
-        "For example: 'https://your-convex-deployment.convex.site/api/auth/callback/google'",
-        "You can find your Convex deployment's HTTP Actions URL in the Convex dashboard under 'Settings' > 'URL & Deploy Key'."
       ]
     }
   ]

@@ -15,11 +15,12 @@ import wrapAnsi from "wrap-ansi";
 
 interface EnvVariable {
   name: string;
-  projects: string[]; // Changed from envFiles to projects
+  projects: string[];
   details: string;
   required?: boolean;
   defaultValue?: string;
   template?: string;
+  alerts?: string[];
 }
 
 interface SetupStep {
@@ -189,6 +190,53 @@ async function updateProjectValue(
   return undefined;
 }
 
+async function getConvexUrls(): Promise<{
+  convexUrl: string;
+  convexSiteUrl: string;
+}> {
+  const originalDir = process.cwd();
+  const backendDir = path.join(originalDir, "packages", "backend");
+
+  if (!fs.existsSync(backendDir)) {
+    console.error(
+      chalk.red(
+        `Error: 'packages/backend' directory not found in ${originalDir}`,
+      ),
+    );
+    return { convexUrl: "", convexSiteUrl: "" };
+  }
+
+  try {
+    process.chdir(backendDir);
+
+    console.log(chalk.dim("Executing 'npx convex function-spec'..."));
+    const stdout = execSync("npx convex function-spec", {
+      encoding: "utf-8",
+    }).trim();
+    console.log(chalk.dim("Raw output from convex function-spec:"));
+    console.log(chalk.dim(stdout));
+
+    const functionSpec = JSON.parse(stdout);
+
+    const convexUrl = functionSpec.url;
+    if (!convexUrl) {
+      throw new Error("Convex URL not found in function-spec output");
+    }
+    const convexSiteUrl = convexUrl.replace("convex.cloud", "convex.site");
+    console.log(chalk.green("Successfully retrieved Convex URLs:"));
+    console.log(chalk.green(`  convexUrl: ${convexUrl}`));
+    console.log(chalk.green(`  convexSiteUrl: ${convexSiteUrl}`));
+    return { convexUrl, convexSiteUrl };
+  } catch (error) {
+    console.error(
+      chalk.red(`Failed to retrieve Convex URLs: ${(error as Error).message}`),
+    );
+    return { convexUrl: "", convexSiteUrl: "" };
+  } finally {
+    process.chdir(originalDir);
+  }
+}
+
 async function setupEnvironment(
   projectDir: string,
   values: Values,
@@ -201,6 +249,13 @@ async function setupEnvironment(
   );
   console.log(chalk.dim(config.introMessage));
   console.log(chalk.dim("Press Ctrl+C at any time to exit\n"));
+
+  // If convexUrl or convexSiteUrl are not set, try to retrieve them
+  if (!values.convexUrl || !values.convexSiteUrl) {
+    const { convexUrl, convexSiteUrl } = await getConvexUrls();
+    values.convexUrl = convexUrl;
+    values.convexSiteUrl = convexSiteUrl;
+  }
 
   for (const [index, step] of config.steps.entries()) {
     console.log(chalk.bold.blue(`\n📍 Step ${index + 1}: ${step.title}`));
@@ -216,18 +271,37 @@ async function setupEnvironment(
 
     for (const variable of step.variables) {
       console.log(chalk.dim(`\n${variable.details}`));
-      const existingValue = await getExistingValue(config.projects, variable);
-      let templateValue = "";
-      if (variable.template) {
-        templateValue = variable.template.replace(
-          /{{(\w+)}}/g,
-          (_, key) => values[key as keyof Values] || "",
-        );
+
+      if (variable.alerts) {
+        for (const alert of variable.alerts) {
+          const processedAlert = alert.replace(
+            /\{\{(\w+)\}\}/g,
+            (_, key) => values[key as keyof Values] || `[${key} not set]`,
+          );
+          console.log(
+            boxen(chalk.bold(processedAlert), {
+              padding: 1,
+              margin: 1,
+              borderColor: "yellow",
+              borderStyle: "round",
+              title: "⚠️  Alert",
+              titleAlignment: "center",
+            }),
+          );
+        }
+        console.log(); // Add an empty line after alerts for better readability
       }
+
+      const existingValue = await getExistingValue(config.projects, variable);
       const defaultValue =
-        existingValue || templateValue || variable.defaultValue;
+        existingValue ||
+        (variable.template
+          ? variable.template.replace(
+              /\{\{(\w+)\}\}/g,
+              (_, key) => values[key as keyof Values] || "",
+            )
+          : variable.defaultValue);
       const requiredText = variable.required === false ? " (optional)" : "";
-      const defaultValueText = defaultValue ? ` (${defaultValue})` : "";
       const answer = await inquirer.prompt([
         {
           type: "input",
@@ -557,12 +631,22 @@ async function main() {
               process.exit(1);
             }
 
+            const { convexUrl, convexSiteUrl } = await getConvexUrls();
+            if (!convexUrl || !convexSiteUrl) {
+              console.log(
+                chalk.yellow(
+                  "\nWarning: Failed to retrieve Convex URLs automatically.",
+                ),
+              );
+              console.log(
+                chalk.yellow(
+                  "You may need to enter them manually during the setup process.",
+                ),
+              );
+            }
             await setupEnvironment(
               process.cwd(),
-              {
-                convexUrl: "",
-                convexSiteUrl: "",
-              },
+              { convexUrl, convexSiteUrl },
               configPath,
             );
           }
