@@ -425,21 +425,47 @@ async function createNewProject(
         spinner.stop();
         return new Promise<void>((resolve, reject) => {
           const child = spawn("npm", ["run", "setup"], {
-            stdio: "inherit",
+            stdio: ["inherit", "pipe", "pipe"],
             shell: true,
             cwd: backendDir,
           });
 
+          let output = "";
+
+          child.stdout?.on("data", (data) => {
+            output += data.toString();
+            process.stdout.write(data);
+          });
+
+          child.stderr?.on("data", (data) => {
+            output += data.toString();
+            process.stderr.write(data);
+
+            if (
+              data
+                .toString()
+                .includes("✖ Error: Unable to push deployment config")
+            ) {
+              console.log(
+                chalk.yellow(
+                  "\nDetected expected error. Stopping Convex setup...",
+                ),
+              );
+              child.kill();
+              resolve();
+            }
+          });
+
           child.on("exit", (code) => {
-            if (code === 0 || code === 1) {
-              logger.log(
+            if (code === 0 || code === null) {
+              resolve();
+            } else {
+              console.log(
                 chalk.yellow(
                   "\nNote: The Convex setup process exited as expected. This is normal at this stage due to missing environment variables.",
                 ),
               );
               resolve();
-            } else {
-              reject(new Error(`Convex setup exited with code ${code}`));
             }
           });
 
