@@ -122,24 +122,29 @@ const logger = createLogger();
 
 async function getExistingValue(
   projects: Project[],
-  key: string,
+  variable: EnvVariable,
 ): Promise<string | undefined> {
-  for (const project of projects) {
+  for (const projectId of variable.projects) {
+    const project = projects.find((p) => p.id === projectId);
+    if (!project) continue;
+
     if (project.envFile) {
-      const value = getEnvFileValue(project.envFile, key);
+      const value = getEnvFileValue(project.envFile, variable.name);
       if (value) return value;
     } else if (project.importCommand) {
       try {
         const convexDir = path.join(process.cwd(), "packages", "backend");
-        const value = execSync(project.importCommand.replace("{{name}}", key), {
-          encoding: "utf-8",
-          cwd: convexDir,
-        }).trim();
+        const value = execSync(
+          project.importCommand.replace("{{name}}", variable.name),
+          {
+            encoding: "utf-8",
+            cwd: convexDir,
+          },
+        ).trim();
 
         if (value) return value;
       } catch (error) {
-        console.error(`Failed to import value for ${key} from ${project.id}`);
-        console.error(`Error: ${(error as Error).message}`);
+        console.error(chalk.red(`Error: ${(error as Error).message}`));
       }
     }
   }
@@ -207,10 +212,7 @@ async function setupEnvironment(
 
     for (const variable of step.variables) {
       console.log(chalk.dim(`\n${variable.details}`));
-      const existingValue = await getExistingValue(
-        config.projects,
-        variable.name,
-      );
+      const existingValue = await getExistingValue(config.projects, variable);
       let templateValue = "";
       if (variable.template) {
         templateValue = variable.template.replace(
