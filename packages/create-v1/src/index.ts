@@ -198,9 +198,9 @@ async function getConvexUrls(projectDir: string): Promise<{
   convexUrl: string;
   convexSiteUrl: string;
 }> {
-  const backendDir = path.join(projectDir, "packages", "backend");
+  const convexDir = path.join(projectDir, "packages", "backend");
 
-  if (!fs.existsSync(backendDir)) {
+  if (!fs.existsSync(convexDir)) {
     console.error(
       chalk.red(
         `Error: 'packages/backend' directory not found in ${projectDir}`,
@@ -213,7 +213,7 @@ async function getConvexUrls(projectDir: string): Promise<{
     console.log(chalk.dim("Executing 'npx convex function-spec'..."));
     const stdout = execSync("npx convex function-spec", {
       encoding: "utf-8",
-      cwd: backendDir,
+      cwd: convexDir,
     }).trim();
     console.log(chalk.dim("Raw output from convex function-spec:"));
     console.log(chalk.dim(stdout));
@@ -363,6 +363,7 @@ async function createNewProject(
   projectPath?: string,
 ): Promise<void> {
   const projectDir = projectPath || path.resolve(process.cwd(), projectName);
+  const convexDir = path.join(projectDir, "packages", "backend");
   const values: Values = {
     convexUrl: "",
     convexSiteUrl: "",
@@ -416,7 +417,6 @@ async function createNewProject(
     {
       title: "Setting up Convex backend",
       task: async (spinner: Ora) => {
-        const backendDir = path.join(projectDir, "packages", "backend");
         printBox(
           "🔧 Convex Setup",
           "You'll now be guided through the Convex project setup process. This will create a new Convex project or link to an existing one.",
@@ -427,7 +427,7 @@ async function createNewProject(
           const child = spawn("npm", ["run", "setup"], {
             stdio: ["inherit", "pipe", "pipe"],
             shell: true,
-            cwd: backendDir,
+            cwd: convexDir,
           });
 
           let output = "";
@@ -480,10 +480,9 @@ async function createNewProject(
       task: async (spinner: Ora) => {
         spinner.stop();
         return new Promise<void>((resolve, reject) => {
-          const backendDir = path.join(projectDir, "packages", "backend");
           exec(
             "npx convex function-spec",
-            { cwd: backendDir },
+            { cwd: convexDir },
             (error, stdout, stderr) => {
               if (error) {
                 reject(
@@ -512,6 +511,7 @@ async function createNewProject(
                 );
                 resolve();
               } catch (parseError) {
+                console.log(chalk.red(stdout));
                 reject(
                   new Error(
                     `Failed to parse function-spec output: ${
@@ -538,6 +538,7 @@ async function createNewProject(
           const child = spawn("npx", ["@convex-dev/auth", "--skip-git-check"], {
             stdio: "inherit",
             shell: true,
+            cwd: convexDir,
           });
 
           child.on("exit", (code) => {
@@ -574,9 +575,8 @@ async function createNewProject(
     {
       title: "Seeding the database",
       task: async () => {
-        const backendDir = path.join(projectDir, "packages", "backend");
         return new Promise<void>((resolve, reject) => {
-          exec("npm run seed", { cwd: backendDir }, (error) => {
+          exec("npm run seed", { cwd: convexDir }, (error) => {
             if (error) {
               reject(
                 new Error(`Failed to seed the database: ${error.message}`),
