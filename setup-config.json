@@ -95,7 +95,7 @@
         {
           "name": "POLAR_ORGANIZATION_ID",
           "projects": ["convex"],
-          "details": "Find your Organization ID in the Polar dashboard under 'Settings'."
+          "details": "Find your Organization ID in the Polar dashboard sidebar under 'Organization' > 'Settings'."
         },
         {
           "name": "POLAR_ACCESS_TOKEN",

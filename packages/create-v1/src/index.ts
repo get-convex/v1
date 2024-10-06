@@ -166,10 +166,13 @@ async function updateProjectValue(
   project: Project,
   key: string,
   value: string,
-): Promise<void> {
+): Promise<string | undefined> {
   if (project.envFile) {
+    const relativePath = path.relative(process.cwd(), project.envFile);
     updateEnvFile(project.envFile, key, value);
-  } else if (project.exportCommand) {
+    return relativePath;
+  }
+  if (project.exportCommand) {
     try {
       const convexDir = path.join(process.cwd(), "packages", "backend");
       execSync(
@@ -183,6 +186,7 @@ async function updateProjectValue(
       console.error(`Error: ${(error as Error).message}`);
     }
   }
+  return undefined;
 }
 
 async function setupEnvironment(
@@ -236,13 +240,28 @@ async function setupEnvironment(
       const value = answer.value;
 
       if (value || variable.required !== false) {
+        const updatedFiles: string[] = [];
         for (const projectId of variable.projects) {
           const project = config.projects.find((p) => p.id === projectId);
           if (project) {
-            await updateProjectValue(project, variable.name, value);
+            const updatedFile = await updateProjectValue(
+              project,
+              variable.name,
+              value,
+            );
+            if (updatedFile) {
+              updatedFiles.push(updatedFile);
+            }
           }
         }
-        console.log(chalk.green(`✅ Set ${variable.name}`));
+        if (updatedFiles.length > 0) {
+          console.log(chalk.green(`✅ Set ${variable.name} in:`));
+          for (const file of updatedFiles) {
+            console.log(chalk.green(`   - ${file}`));
+          }
+        } else {
+          console.log(chalk.green(`✅ Set ${variable.name}`));
+        }
       } else {
         console.log(chalk.yellow(`⚠️ Skipped ${variable.name}`));
       }
