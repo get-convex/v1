@@ -35,6 +35,7 @@ interface Project {
   envFile?: string;
   exportCommand?: string;
   importCommand?: string;
+  ignoreLogs?: string[]; // Add this line
 }
 
 interface SetupConfig {
@@ -238,6 +239,11 @@ async function getConvexUrls(projectDir: string): Promise<{
   }
 }
 
+// Add this utility function
+function shouldIgnoreLog(message: string, ignoreLogs: string[] = []): boolean {
+  return ignoreLogs.some((prefix) => message.startsWith(prefix));
+}
+
 async function setupEnvironment(
   projectDir: string,
   values: Values,
@@ -245,11 +251,30 @@ async function setupEnvironment(
 ): Promise<void> {
   const config = loadConfig(configPath);
 
-  console.log(
+  // Create a custom console logger
+  const customConsole = {
+    log: (message: string) => {
+      if (
+        !config.projects.some((p) => shouldIgnoreLog(message, p.ignoreLogs))
+      ) {
+        console.log(message);
+      }
+    },
+    error: (message: string) => {
+      if (
+        !config.projects.some((p) => shouldIgnoreLog(message, p.ignoreLogs))
+      ) {
+        console.error(message);
+      }
+    },
+  };
+
+  // Rest of the function remains the same, but use customConsole instead of console
+  customConsole.log(
     chalk.bold.cyan("\n🚀 Welcome to the v1 Environment Setup Wizard"),
   );
-  console.log(chalk.dim(config.introMessage));
-  console.log(chalk.dim("Press Ctrl+C at any time to exit\n"));
+  customConsole.log(chalk.dim(config.introMessage));
+  customConsole.log(chalk.dim("Press Ctrl+C at any time to exit\n"));
 
   // If convexUrl or convexSiteUrl are not set, try to retrieve them
   if (!values.convexUrl || !values.convexSiteUrl) {
@@ -259,20 +284,19 @@ async function setupEnvironment(
   }
 
   for (const [index, step] of config.steps.entries()) {
-    console.log(chalk.bold.blue(`\n📍 Step ${index + 1}: ${step.title}`));
-    console.log(chalk.white(step.instructions));
+    customConsole.log(chalk.bold.blue(`\n📍 Step ${index + 1}: ${step.title}`));
+    customConsole.log(chalk.white(step.instructions));
 
     if (step.additionalInstructions) {
-      console.log(chalk.yellow("\nℹ️  Additional Instructions:"));
+      customConsole.log(chalk.yellow("\nℹ️  Additional Instructions:"));
       for (const instruction of step.additionalInstructions) {
-        console.log(chalk.yellow(`  • ${instruction}`));
+        customConsole.log(chalk.yellow(`  • ${instruction}`));
       }
-      console.log();
+      customConsole.log("");
     }
 
     for (const variable of step.variables) {
-      // Make details more prominent
-      console.log(chalk.cyan(`\n${variable.details}`));
+      customConsole.log(chalk.cyan(`\n${variable.details}`));
 
       if (variable.info) {
         for (const infoItem of variable.info) {
@@ -280,7 +304,7 @@ async function setupEnvironment(
             /\{\{(\w+)\}\}/g,
             (_, key) => values[key as keyof Values] || `[${key} not set]`,
           );
-          console.log(
+          customConsole.log(
             boxen(chalk.blue(processedInfo), {
               padding: 0.5,
               margin: 0.5,
@@ -335,22 +359,22 @@ async function setupEnvironment(
           }
         }
         if (updatedFiles.length > 0) {
-          console.log(chalk.green(`✅ Set ${variable.name} in:`));
+          customConsole.log(chalk.green(`✅ Set ${variable.name} in:`));
           for (const file of updatedFiles) {
-            console.log(chalk.green(`   - ${file}`));
+            customConsole.log(chalk.green(`   - ${file}`));
           }
         } else {
-          console.log(chalk.green(`✅ Set ${variable.name}`));
+          customConsole.log(chalk.green(`✅ Set ${variable.name}`));
         }
       } else {
-        console.log(chalk.yellow(`⚠️ Skipped ${variable.name}`));
+        customConsole.log(chalk.yellow(`⚠️ Skipped ${variable.name}`));
       }
     }
 
-    console.log(chalk.green("✅ Step completed"));
+    customConsole.log(chalk.green("✅ Step completed"));
   }
 
-  console.log(
+  customConsole.log(
     chalk.bold.green(
       "\n🎉 Setup complete! Environment variables have been updated.",
     ),

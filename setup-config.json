@@ -4,7 +4,8 @@
     {
       "id": "convex",
       "exportCommand": "npx convex env set {{name}} {{value}}",
-      "importCommand": "npx convex env get {{name}}"
+      "importCommand": "npx convex env get {{name}}",
+      "ignoreLogs": ["✖ Environment variable"]
     },
     {
       "id": "web",
