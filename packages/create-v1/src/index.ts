@@ -218,12 +218,13 @@ async function getConvexUrls(projectDir: string): Promise<{
     console.log(chalk.dim("Raw output from convex function-spec:"));
     console.log(chalk.dim(stdout));
 
-    const functionSpec = JSON.parse(stdout);
-
-    const convexUrl = functionSpec.url;
-    if (!convexUrl) {
+    // Use a regular expression to extract the URL
+    const urlMatch = stdout.match(/"url"\s*:\s*"(https:\/\/[^"]+)"/);
+    if (!urlMatch) {
       throw new Error("Convex URL not found in function-spec output");
     }
+
+    const convexUrl = urlMatch[1]!;
     const convexSiteUrl = convexUrl.replace("convex.cloud", "convex.site");
     console.log(chalk.green("Successfully retrieved Convex URLs:"));
     console.log(chalk.green(`  convexUrl: ${convexUrl}`));
@@ -511,7 +512,6 @@ async function createNewProject(
                 );
                 resolve();
               } catch (parseError) {
-                console.log(chalk.red(stdout));
                 reject(
                   new Error(
                     `Failed to parse function-spec output: ${
@@ -559,7 +559,8 @@ async function createNewProject(
     },
     {
       title: "Setting up environment variables",
-      task: async () => {
+      task: async (spinner: Ora) => {
+        spinner.stop();
         const configPath =
           useDevConfig && devConfigPath
             ? devConfigPath
