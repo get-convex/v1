@@ -130,12 +130,16 @@ async function getExistingValue(
       if (value) return value;
     } else if (project.importCommand) {
       try {
+        const convexDir = path.join(process.cwd(), "packages", "backend");
         const value = execSync(project.importCommand.replace("{{name}}", key), {
           encoding: "utf-8",
+          cwd: convexDir,
         }).trim();
+
         if (value) return value;
       } catch (error) {
         console.error(`Failed to import value for ${key} from ${project.id}`);
+        console.error(`Error: ${(error as Error).message}`);
       }
     }
   }
@@ -162,14 +166,16 @@ async function updateProjectValue(
     updateEnvFile(project.envFile, key, value);
   } else if (project.exportCommand) {
     try {
+      const convexDir = path.join(process.cwd(), "packages", "backend");
       execSync(
         project.exportCommand
           .replace("{{name}}", key)
           .replace("{{value}}", value),
-        { stdio: "inherit" },
+        { stdio: "inherit", cwd: convexDir },
       );
     } catch (error) {
       console.error(`Failed to export value for ${key} to ${project.id}`);
+      console.error(`Error: ${(error as Error).message}`);
     }
   }
 }
