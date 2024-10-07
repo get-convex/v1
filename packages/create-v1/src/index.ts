@@ -20,7 +20,7 @@ interface EnvVariable {
   required?: boolean;
   defaultValue?: string;
   template?: string;
-  info?: string[]; // Changed from alerts to info
+  info?: string[];
 }
 
 interface SetupStep {
@@ -29,6 +29,7 @@ interface SetupStep {
   variables: EnvVariable[];
   additionalInstructions?: string[];
   required?: boolean;
+  description?: string;
 }
 
 interface Project {
@@ -36,7 +37,7 @@ interface Project {
   envFile?: string;
   exportCommand?: string;
   importCommand?: string;
-  ignoreLogs?: string[]; // Add this line
+  ignoreLogs?: string[];
 }
 
 interface SetupConfig {
@@ -278,7 +279,12 @@ async function setupEnvironment(
 
   for (const [index, step] of config.steps.entries()) {
     customConsole.log(chalk.bold.blue(`\n📍 Step ${index + 1}: ${step.title}`));
-    customConsole.log(chalk.white(step.instructions));
+
+    if (step.description) {
+      customConsole.log(chalk.dim(`\n${step.description}`));
+    }
+
+    customConsole.log(chalk.white(`\n${step.instructions}`));
 
     if (step.additionalInstructions) {
       customConsole.log(chalk.yellow("\nℹ️  Additional Instructions:"));
@@ -307,7 +313,7 @@ async function setupEnvironment(
     }
 
     for (const variable of step.variables) {
-      customConsole.log(chalk.cyan(`\n${variable.details}`));
+      customConsole.log(chalk.cyan(`\n${variable.details}\n`));
 
       if (variable.info) {
         for (const infoItem of variable.info) {
