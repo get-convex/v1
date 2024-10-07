@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "convex dev --tail-logs",
     "setup": "convex dev --once",
-    "seed": "convex run init"
+    "seed": "convex dev --once --run init"
   },
   "type": "module",
   "author": "",
