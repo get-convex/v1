@@ -54,7 +54,7 @@
     {
       "title": "Polar",
       "description": "Polar is a billing platform that provides subscription management and billing.",
-      "instructions": "Set up an account at https://polar.sh for billing and obtain your access token and organization ID.",
+      "instructions": "Set up a creator account at https://sandbox.polar.sh/dashboard/create for billing and obtain your access token and organization ID.",
       "variables": [
         {
           "name": "POLAR_ORGANIZATION_ID",
@@ -76,7 +76,7 @@
         }
       ],
       "additionalInstructions": [
-        "If you're just testing, be sure to switch to Sandbox via the top left dropdown in the dashboard before proceeding."
+        "The url above uses the Sandbox environment for testing purposes."
       ]
     },
     {
