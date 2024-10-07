@@ -1,5 +1,5 @@
 {
-  "introMessage": "Welcome to the environment setup wizard for Create v1. This will guide you through setting up various services and adding the necessary environment variables.",
+  "introMessage": "Let's set up your services and environment variables.",
   "projects": [
     {
       "id": "convex",

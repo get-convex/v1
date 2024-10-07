@@ -271,9 +271,7 @@ async function setupEnvironment(
     },
   };
 
-  customConsole.log(
-    chalk.bold.cyan("\n🚀 Welcome to the v1 Environment Setup Wizard"),
-  );
+  customConsole.log(chalk.bold.cyan("\n🚀 Welcome to v1 Environment Setup"));
   customConsole.log(chalk.dim(config.introMessage));
   customConsole.log(chalk.dim("Press Ctrl+C at any time to exit\n"));
 
