@@ -614,8 +614,27 @@ async function createNewProject(
   console.log(chalk.white("  bun dev"));
 }
 
+function checkBunInstallation(): boolean {
+  try {
+    execSync("bun --version", { stdio: "ignore" });
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
 async function main() {
   console.log(chalk.bold.cyan("\n🌟 Welcome to Create v1"));
+
+  // Check for Bun installation
+  if (!checkBunInstallation()) {
+    console.error(
+      chalk.red("\n❌ Error: Bun is not installed or not in your PATH."),
+    );
+    console.log(chalk.yellow("Please install Bun before proceeding:"));
+    console.log(chalk.cyan("https://bun.sh/docs/installation"));
+    process.exit(1);
+  }
 
   const currentFileUrl = import.meta.url;
   const currentFilePath = fileURLToPath(currentFileUrl);
