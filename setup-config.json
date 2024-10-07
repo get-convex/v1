@@ -31,6 +31,25 @@
       ]
     },
     {
+      "title": "Google Authentication",
+      "instructions": "Set up Google OAuth 2.0 credentials for authentication. Follow the guide at https://support.google.com/cloud/answer/6158849?hl=en to create a new project and set up OAuth 2.0 credentials.",
+      "variables": [
+        {
+          "name": "AUTH_GOOGLE_ID",
+          "projects": ["convex"],
+          "details": "The client ID from your Google OAuth 2.0 credentials. You can find this in the Google Cloud Console under 'APIs & Services' > 'Credentials'.",
+          "info": [
+            "Use this as your authorized redirect URI: {{convexSiteUrl}}/api/auth/callback/google"
+          ]
+        },
+        {
+          "name": "AUTH_GOOGLE_SECRET",
+          "projects": ["convex"],
+          "details": "The client secret from your Google OAuth 2.0 credentials. You can find this in the Google Cloud Console under 'APIs & Services' > 'Credentials'."
+        }
+      ]
+    },
+    {
       "title": "OpenPanel",
       "instructions": "Create an account at https://openpanel.dev and get your client ID and secret key.",
       "variables": [
@@ -44,7 +63,8 @@
           "projects": ["web", "app"],
           "details": "The client ID is on the same page as the secret key, under 'Settings' > 'Projects'."
         }
-      ]
+      ],
+      "required": false
     },
     {
       "title": "Sentry",
@@ -70,7 +90,8 @@
           "projects": ["app"],
           "details": "You can find your Sentry DSN in the Sentry dashboard under 'Settings' > 'Projects' > [Your Project] > 'Client Keys (DSN)'. It should look like 'https://examplePublicKey@o0.ingest.sentry.io/0'."
         }
-      ]
+      ],
+      "required": false
     },
     {
       "title": "Resend",
@@ -87,7 +108,8 @@
           "details": "This should be the email address you want to use as the sender for authentication emails. Make sure it's verified in your Resend account under 'Domains'. If not provided, you'll only be able to send emails to the address on your Resend account.",
           "required": false
         }
-      ]
+      ],
+      "required": false
     },
     {
       "title": "Polar",
@@ -114,7 +136,8 @@
       ],
       "additionalInstructions": [
         "If you're just testing, be sure to switch to Sandbox via the top left dropdown in the dashboard before proceeding."
-      ]
+      ],
+      "required": false
     },
     {
       "title": "Cal.com",
@@ -126,7 +149,8 @@
           "details": "This is your public Cal.com link. It should look like 'https://cal.com/yourusername' or your custom domain if you've set one up.",
           "required": false
         }
-      ]
+      ],
+      "required": false
     },
     {
       "title": "Dub",
@@ -144,7 +168,8 @@
           "details": "Your Dub API key, found in your Dub dashboard under API settings.",
           "required": false
         }
-      ]
+      ],
+      "required": false
     },
     {
       "title": "Loops",
@@ -156,26 +181,8 @@
           "details": "The ID of the Loops form you want to use, found in the Loops dashboard when viewing your form settings.",
           "required": false
         }
-      ]
-    },
-    {
-      "title": "Google Authentication",
-      "instructions": "Set up Google OAuth 2.0 credentials for authentication. Follow the guide at https://support.google.com/cloud/answer/6158849?hl=en to create a new project and set up OAuth 2.0 credentials.",
-      "variables": [
-        {
-          "name": "AUTH_GOOGLE_ID",
-          "projects": ["convex"],
-          "details": "The client ID from your Google OAuth 2.0 credentials. You can find this in the Google Cloud Console under 'APIs & Services' > 'Credentials'.",
-          "info": [
-            "Use this as your authorized redirect URI: {{convexSiteUrl}}/api/auth/callback/google"
-          ]
-        },
-        {
-          "name": "AUTH_GOOGLE_SECRET",
-          "projects": ["convex"],
-          "details": "The client secret from your Google OAuth 2.0 credentials. You can find this in the Google Cloud Console under 'APIs & Services' > 'Credentials'."
-        }
-      ]
+      ],
+      "required": false
     }
   ]
 }
