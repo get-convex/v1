@@ -33,7 +33,6 @@ reuse and best practices that will grow with your business.
 [Resend](https://resend.com/) - Email delivery<br>
 [i18n](https://next-international.vercel.app/) - Internationalization<br>
 [Sentry](https://sentry.io/) - Error handling/monitoring<br>
-[Dub](https://dub.sh/) - Sharable links<br>
 [OpenPanel](https://openpanel.dev/) - Analytics<br>
 [Polar](https://polar.sh) - Billing (coming soon)<br>
 [nuqs](https://nuqs.47ng.com/) - Type-safe search params state manager<br>
@@ -252,18 +251,6 @@ If you choose to manually set up services and environment variables, follow thes
    ```
    # Your public Cal.com link, e.g., 'https://cal.com/yourusername'
    NEXT_PUBLIC_CAL_LINK=https://cal.com/your-username
-   ```
-
-### Dub (Optional)
-
-1. Set up an account at https://dub.sh
-2. Add the following to `apps/app/.env`:
-   ```
-   # Your Dub project URL, typically in the format 'https://your-project.dub.sh'
-   NEXT_PUBLIC_DUB_URL=https://your-project.dub.sh
-
-   # Your Dub API key, found in your Dub dashboard under API settings
-   DUB_API_KEY=dub_foobarfoobarfoobarfoobarfoobar42
    ```
 
 ### Loops (Optional)

@@ -19,6 +19,7 @@
   "steps": [
     {
       "title": "Convex",
+      "description": "Convex is a complete backend platform that provides a database, API, and authentication.",
       "instructions": "Set up a Convex project at https://dashboard.convex.dev and obtain your Convex URL.",
       "variables": [
         {
@@ -32,6 +33,7 @@
     },
     {
       "title": "Google Authentication",
+      "description": "Google Authentication allows users to sign in to your app using their Google accounts.",
       "instructions": "Set up Google OAuth 2.0 credentials for authentication. Follow the guide at https://support.google.com/cloud/answer/6158849?hl=en to create a new project and set up OAuth 2.0 credentials.",
       "variables": [
         {
@@ -50,69 +52,8 @@
       ]
     },
     {
-      "title": "OpenPanel",
-      "instructions": "Create an account at https://openpanel.dev and get your client ID and secret key.",
-      "variables": [
-        {
-          "name": "OPENPANEL_SECRET_KEY",
-          "projects": ["app"],
-          "details": "In the OpenPanel dashboard under 'Settings' > 'Projects', you have to create a new client for one of your projects to get a secret key, if you don't already have one. It starts with 'sec_'."
-        },
-        {
-          "name": "NEXT_PUBLIC_OPENPANEL_CLIENT_ID",
-          "projects": ["web", "app"],
-          "details": "The client ID is on the same page as the secret key, under 'Settings' > 'Projects'."
-        }
-      ],
-      "required": false
-    },
-    {
-      "title": "Sentry",
-      "instructions": "Set up a project on https://sentry.io and obtain your DSN and other required information.",
-      "variables": [
-        {
-          "name": "SENTRY_ORG",
-          "projects": ["app"],
-          "details": "Your Sentry organization slug, found under 'Settings' > 'Organization - General Settings'. It's also the subdomain of your Sentry URL."
-        },
-        {
-          "name": "SENTRY_AUTH_TOKEN",
-          "projects": ["app"],
-          "details": "Generate an auth token in the Sentry dashboard under 'Settings' > 'Auth Tokens'."
-        },
-        {
-          "name": "SENTRY_PROJECT",
-          "projects": ["app"],
-          "details": "Your Sentry project ID, found under 'Settings' > 'Projects' > [Your Project] > 'Project Details'."
-        },
-        {
-          "name": "NEXT_PUBLIC_SENTRY_DSN",
-          "projects": ["app"],
-          "details": "You can find your Sentry DSN in the Sentry dashboard under 'Settings' > 'Projects' > [Your Project] > 'Client Keys (DSN)'. It should look like 'https://examplePublicKey@o0.ingest.sentry.io/0'."
-        }
-      ],
-      "required": false
-    },
-    {
-      "title": "Resend",
-      "instructions": "Create an account at https://resend.com and get your API key.",
-      "variables": [
-        {
-          "name": "RESEND_API_KEY",
-          "projects": ["convex"],
-          "details": "Find your API key in the Resend dashboard under 'API Keys'. It starts with 're_'."
-        },
-        {
-          "name": "RESEND_SENDER_EMAIL_AUTH",
-          "projects": ["convex"],
-          "details": "This should be the email address you want to use as the sender for authentication emails. Make sure it's verified in your Resend account under 'Domains'. If not provided, you'll only be able to send emails to the address on your Resend account.",
-          "required": false
-        }
-      ],
-      "required": false
-    },
-    {
       "title": "Polar",
+      "description": "Polar is a billing platform that provides subscription management and billing.",
       "instructions": "Set up an account at https://polar.sh for billing and obtain your access token and organization ID.",
       "variables": [
         {
@@ -136,12 +77,80 @@
       ],
       "additionalInstructions": [
         "If you're just testing, be sure to switch to Sandbox via the top left dropdown in the dashboard before proceeding."
+      ]
+    },
+    {
+      "title": "OpenPanel",
+      "description": "OpenPanel is an open-source analytics platform.",
+      "instructions": "Create an account at https://openpanel.dev and get your client ID and secret key.",
+      "variables": [
+        {
+          "name": "OPENPANEL_SECRET_KEY",
+          "projects": ["app"],
+          "details": "In the OpenPanel dashboard under 'Settings' > 'Projects', you have to create a new client for one of your projects to get a secret key, if you don't already have one. It starts with 'sec_'."
+        },
+        {
+          "name": "NEXT_PUBLIC_OPENPANEL_CLIENT_ID",
+          "projects": ["web", "app"],
+          "details": "The client ID is on the same page as the secret key, under 'Settings' > 'Projects'."
+        }
       ],
-      "required": false
+      "required": false,
+      "requiredMessage": "Skipping this step will disable analytics in the app."
+    },
+    {
+      "title": "Sentry",
+      "description": "Sentry is a crash reporting platform that helps you monitor and fix errors in your app.",
+      "instructions": "Set up a project on https://sentry.io and obtain your DSN and other required information.",
+      "variables": [
+        {
+          "name": "SENTRY_ORG",
+          "projects": ["app"],
+          "details": "Your Sentry organization slug, found under 'Settings' > 'Organization - General Settings'. It's also the subdomain of your Sentry URL."
+        },
+        {
+          "name": "SENTRY_AUTH_TOKEN",
+          "projects": ["app"],
+          "details": "Generate an auth token in the Sentry dashboard under 'Settings' > 'Auth Tokens'."
+        },
+        {
+          "name": "SENTRY_PROJECT",
+          "projects": ["app"],
+          "details": "Your Sentry project ID, found under 'Settings' > 'Projects' > [Your Project] > 'Project Details'."
+        },
+        {
+          "name": "NEXT_PUBLIC_SENTRY_DSN",
+          "projects": ["app"],
+          "details": "You can find your Sentry DSN in the Sentry dashboard under 'Settings' > 'Projects' > [Your Project] > 'Client Keys (DSN)'. It should look like 'https://examplePublicKey@o0.ingest.sentry.io/0'."
+        }
+      ],
+      "required": false,
+      "requiredMessage": "Skipping this step will disable error reporting in the app."
+    },
+    {
+      "title": "Resend",
+      "description": "Resend is a transactional email platform used to handle subscription related emails in the app.",
+      "instructions": "Create an account at https://resend.com and get your API key.",
+      "variables": [
+        {
+          "name": "RESEND_API_KEY",
+          "projects": ["convex"],
+          "details": "Find your API key in the Resend dashboard under 'API Keys'. It starts with 're_'."
+        },
+        {
+          "name": "RESEND_SENDER_EMAIL_AUTH",
+          "projects": ["convex"],
+          "details": "This should be the email address you want to use as the sender for authentication emails. Make sure it's verified in your Resend account under 'Domains'. If not provided, you'll only be able to send emails to the address on your Resend account.",
+          "required": false
+        }
+      ],
+      "required": false,
+      "requiredMessage": "Resend is required for subscription emails, but the app can run initially without it for testing purposes."
     },
     {
       "title": "Cal.com",
-      "instructions": "Set up your Cal.com account and get your public link.",
+      "description": "Cal.com is a calendar booking platform that powers the /talk-to-us page.",
+      "instructions": "Set up your Cal.com account and get a calendar link. A calendar link should be just the path for a specific event, such as \"my-username/15min\".",
       "variables": [
         {
           "name": "NEXT_PUBLIC_CAL_LINK",
@@ -150,30 +159,13 @@
           "required": false
         }
       ],
-      "required": false
-    },
-    {
-      "title": "Dub",
-      "instructions": "Set up an account at https://dub.sh for sharable links.",
-      "variables": [
-        {
-          "name": "NEXT_PUBLIC_DUB_URL",
-          "projects": ["app"],
-          "details": "Your Dub project URL, typically in the format 'https://your-project.dub.sh'.",
-          "required": false
-        },
-        {
-          "name": "DUB_API_KEY",
-          "projects": ["app"],
-          "details": "Your Dub API key, found in your Dub dashboard under API settings.",
-          "required": false
-        }
-      ],
-      "required": false
+      "required": false,
+      "requiredMessage": "Cal.com powers the /talk-to-us page, and is only required for that page to render correctly."
     },
     {
       "title": "Loops",
-      "instructions": "Set up an account at https://loops.so for form handling.",
+      "description": "Loops is an email marketing platform, it powers the newsletter subscription form on the site.",
+      "instructions": "Set up an account at https://loops.so and create a form for newsletter subscription.",
       "variables": [
         {
           "name": "LOOPS_FORM_ID",
@@ -182,7 +174,8 @@
           "required": false
         }
       ],
-      "required": false
+      "required": false,
+      "requiredMessage": "Loops is only required for the newsletter subscription form on the site."
     }
   ]
 }
