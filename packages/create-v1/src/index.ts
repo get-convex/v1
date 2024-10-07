@@ -207,7 +207,7 @@ async function getConvexUrls(projectDir: string): Promise<{
         `Error: 'packages/backend' directory not found in ${projectDir}`,
       ),
     );
-    return { convexUrl: "", convexSiteUrl: "" };
+    process.exit(1);
   }
 
   try {
@@ -235,7 +235,7 @@ async function getConvexUrls(projectDir: string): Promise<{
     console.error(
       chalk.red(`Failed to retrieve Convex URLs: ${(error as Error).message}`),
     );
-    return { convexUrl: "", convexSiteUrl: "" };
+    process.exit(1);
   }
 }
 
@@ -275,13 +275,6 @@ async function setupEnvironment(
   );
   customConsole.log(chalk.dim(config.introMessage));
   customConsole.log(chalk.dim("Press Ctrl+C at any time to exit\n"));
-
-  // If convexUrl or convexSiteUrl are not set, try to retrieve them
-  if (!values.convexUrl || !values.convexSiteUrl) {
-    const { convexUrl, convexSiteUrl } = await getConvexUrls(projectDir);
-    values.convexUrl = convexUrl;
-    values.convexSiteUrl = convexSiteUrl;
-  }
 
   for (const [index, step] of config.steps.entries()) {
     customConsole.log(chalk.bold.blue(`\n📍 Step ${index + 1}: ${step.title}`));
@@ -399,10 +392,6 @@ async function createNewProject(
 ): Promise<void> {
   const projectDir = projectPath || path.resolve(process.cwd(), projectName);
   const convexDir = path.join(projectDir, "packages", "backend");
-  const values: Values = {
-    convexUrl: "",
-    convexSiteUrl: "",
-  };
   logger.log(
     chalk.bold.cyan(`\n🚀 Creating a new v1 project in ${projectDir}...\n`),
   );
@@ -510,55 +499,6 @@ async function createNewProject(
       },
     },
     {
-      title: "Retrieving Convex URL",
-      task: async (spinner: Ora) => {
-        spinner.stop();
-        return new Promise<void>((resolve, reject) => {
-          exec(
-            "npx convex function-spec",
-            { cwd: convexDir },
-            (error, stdout, stderr) => {
-              if (error) {
-                reject(
-                  new Error(`Failed to retrieve Convex URL: ${error.message}`),
-                );
-                return;
-              }
-              try {
-                const functionSpec = JSON.parse(stdout);
-                const convexUrl = functionSpec.url;
-                if (!convexUrl) {
-                  reject(
-                    new Error("Convex URL not found in function-spec output"),
-                  );
-                  return;
-                }
-
-                values.convexUrl = convexUrl;
-                values.convexSiteUrl = convexUrl.replace(
-                  "convex.cloud",
-                  "convex.site",
-                );
-
-                console.log(
-                  chalk.green("\nConvex URLs have been retrieved and stored."),
-                );
-                resolve();
-              } catch (parseError) {
-                reject(
-                  new Error(
-                    `Failed to parse function-spec output: ${
-                      (parseError as Error).message
-                    }`,
-                  ),
-                );
-              }
-            },
-          );
-        });
-      },
-    },
-    {
       title: "Setting up authentication",
       task: async (spinner: Ora) => {
         spinner.stop();
@@ -601,8 +541,13 @@ async function createNewProject(
         if (!fs.existsSync(configPath)) {
           throw new Error(`setup-config.json not found at ${configPath}`);
         }
+        const { convexUrl, convexSiteUrl } = await getConvexUrls(projectDir);
 
-        await setupEnvironment(projectDir, values, configPath);
+        await setupEnvironment(
+          projectDir,
+          { convexUrl, convexSiteUrl },
+          configPath,
+        );
       },
     },
     {
@@ -741,18 +686,6 @@ async function main() {
           }
 
           const { convexUrl, convexSiteUrl } = await getConvexUrls(projectDir);
-          if (!convexUrl || !convexSiteUrl) {
-            console.log(
-              chalk.yellow(
-                "\nWarning: Failed to retrieve Convex URLs automatically.",
-              ),
-            );
-            console.log(
-              chalk.yellow(
-                "You may need to enter them manually during the setup process.",
-              ),
-            );
-          }
           await setupEnvironment(
             projectDir,
             { convexUrl, convexSiteUrl },
