@@ -15,7 +15,7 @@ import { SubscribeForm } from "./subscribe-form";
 export function Header() {
   return (
     <header className="absolute top-0 w-full flex items-center justify-between p-4 z-10">
-      <span className="hidden md:block text-sm font-medium">v1.run</span>
+      <span className="hidden md:block text-sm font-medium">convex-v1.run</span>
 
       <Link href="/">
         <Image
