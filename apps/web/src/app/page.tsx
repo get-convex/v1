@@ -36,7 +36,7 @@ export default function Page() {
       </span> */}
 
       <div className="mt-10 mb-8">
-        <CopyText value="bunx degit get-convex/v1 v1" />
+        <CopyText value="bun create @erquhart/convex-v1@latest" />
       </div>
 
       <TooltipProvider delayDuration={0}>

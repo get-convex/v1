@@ -30,6 +30,7 @@ interface SetupStep {
   additionalInstructions?: string[];
   required?: boolean;
   description?: string;
+  interactive?: boolean; // Add this new property
 }
 
 interface Project {
@@ -294,7 +295,7 @@ async function setupEnvironment(
 
     // Check if the step is optional
     const isOptional = step.required === false;
-    if (isOptional) {
+    if (isOptional && step.interactive !== false) {
       const { setupStep } = await inquirer.prompt<{ setupStep: boolean }>([
         {
           type: "confirm",
@@ -345,17 +346,23 @@ async function setupEnvironment(
               (_, key) => values[key as keyof Values] || "",
             )
           : variable.defaultValue);
-      const requiredText = variable.required === false ? " (optional)" : "";
-      const answer = await inquirer.prompt([
-        {
-          type: "input",
-          name: "value",
-          message: `Enter ${chalk.bold(variable.name)}${requiredText}:`,
-          default: defaultValue,
-        },
-      ]);
 
-      const value = answer.value;
+      let value: string;
+
+      if (step.interactive === false) {
+        value = defaultValue || "";
+      } else {
+        const requiredText = variable.required === false ? " (optional)" : "";
+        const answer = await inquirer.prompt([
+          {
+            type: "input",
+            name: "value",
+            message: `Enter ${chalk.bold(variable.name)}${requiredText}:`,
+            default: defaultValue,
+          },
+        ]);
+        value = answer.value;
+      }
 
       if (value || variable.required !== false) {
         const updatedFiles: string[] = [];
@@ -576,14 +583,21 @@ async function createNewProject(
       title: "Seeding the database",
       task: async () => {
         return new Promise<void>((resolve, reject) => {
-          exec("npm run seed", { cwd: convexDir }, (error) => {
-            if (error) {
-              reject(
-                new Error(`Failed to seed the database: ${error.message}`),
-              );
-            } else {
+          const child = spawn("bun", ["run", "seed"], {
+            stdio: "inherit",
+            cwd: convexDir,
+          });
+
+          child.on("exit", (code) => {
+            if (code === 0) {
               resolve();
+            } else {
+              reject(new Error(`Database seeding failed with code ${code}`));
             }
+          });
+
+          child.on("error", (error) => {
+            reject(error);
           });
         });
       },

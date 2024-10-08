@@ -18,6 +18,20 @@
   ],
   "steps": [
     {
+      "title": "App URL",
+      "description": "The URL of the app, used for linking from the web app.",
+      "instructions": "Enter the URL of the app.",
+      "variables": [
+        {
+          "name": "NEXT_PUBLIC_APP_URL",
+          "projects": ["web"],
+          "details": "This is the URL of the app, used for linking from the web app.",
+          "defaultValue": "http://localhost:3000"
+        }
+      ],
+      "interactive": false
+    },
+    {
       "title": "Convex",
       "description": "Convex is a complete backend platform that provides a database, API, and authentication.",
       "instructions": "Set up a Convex project at https://dashboard.convex.dev and obtain your Convex URL.",
