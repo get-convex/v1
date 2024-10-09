@@ -285,3 +285,28 @@ After setting up all the required services and environment variables, proceed to
 
 For more detailed information on each component, refer to their respective documentation linked in the "What's included" section above.
 </details>
+
+## Deployment
+
+To deploy your v1 project to production, follow these steps:
+
+### Deploying to Vercel
+
+This repo contains two Next.js apps, you can deploy one or both to Vercel. Each
+would be a separate Vercel project.
+
+Steps to deploy a Vercel project with Convex can be found
+[here](https://docs.convex.dev/production/hosting/vercel#deploying-to-vercel).
+
+
+### Production Environment Variables
+
+- **NEXT_PUBLIC_APP_URL**
+  _Optional for apps/web_
+  This is the URL for your deployed app, e.g., `https://your-app.vercel.app`.
+  It is used by the marketing site to link to the app.
+
+- **NEXT_PUBLIC_CONVEX_URL**
+  _Required for both apps_
+  This is the URL for your deployed Convex instance, e.g.,
+  `https://your-project-name.convex.cloud`.
