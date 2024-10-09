@@ -17,9 +17,7 @@
     "lint": "turbo lint && bun lint:repo",
     "lint:repo": "bunx sherif@latest",
     "lint:repo:fix": "bunx sherif@latest --fix",
-    "typecheck": "turbo typecheck",
-    "setup-env": "node -r ts-node/register scripts/setup-env.ts",
-    "create": "tsx packages/create-v1/src/index.ts"
+    "typecheck": "turbo typecheck"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
