@@ -1,6 +1,8 @@
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
 
+console.log("process.env", process.env);
+
 export const env = createEnv({
   server: {
     CONVEX_SITE_URL: z.string().url(),
@@ -26,6 +28,5 @@ export const env = createEnv({
     AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
     AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
   },
-  //skipValidation: !!process.env.CI || !!process.env.SKIP_ENV_VALIDATION,
-  skipValidation: true,
+  skipValidation: !!process.env.CI || !!process.env.SKIP_ENV_VALIDATION,
 });
