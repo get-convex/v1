@@ -53,7 +53,7 @@ export default async function Page() {
                   <a
                     target="_blank"
                     rel="noreferrer"
-                    href="https://github.com/waynesutton/convex-saas/tree/main/docs"
+                    href="https://github.com/get-convex/v1/tree/main/docs"
                     className={cn(
                       `${buttonVariants({ variant: "ghost", size: "sm" })} gap-2`,
                     )}

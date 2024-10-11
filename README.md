@@ -7,8 +7,8 @@
     An open-source starter kit based on an <a href="https://v1.run">open-source starter kit</a> by <a href="https://midday.ai">Midday</a>. Ported to <a href="https://convex.dev">Convex</a>.
     <br />
     <br />
-    <a href="https://v1-convex.vercel.app"><strong>Website</strong></a> ·
-    <a href="https://github.com/get-convex/v1-convex/issues"><strong>Issues</strong></a> ·
+    <a href="https://convex-v1.run"><strong>Website</strong></a> ·
+    <a href="https://github.com/get-convex/v1/issues"><strong>Issues</strong></a> ·
     <a href="#whats-included"><strong>What's included</strong></a> ·
     <a href="#prerequisites"><strong>Prerequisites</strong></a> ·
     <a href="#getting-started"><strong>Getting Started</strong></a> ·
@@ -93,6 +93,8 @@ This command will guide you through the process of setting up your project, incl
 5. Setting up the Convex backend
 6. Configuring authentication
 7. Setting up environment variables
+8. Adding test products to Polar
+9. Seeding the database for subscriptions
 
 After the setup is complete, you can start your development server by running:
 
@@ -283,3 +285,28 @@ After setting up all the required services and environment variables, proceed to
 
 For more detailed information on each component, refer to their respective documentation linked in the "What's included" section above.
 </details>
+
+## Deployment
+
+To deploy your v1 project to production, follow these steps:
+
+### Deploying to Vercel
+
+This repo contains two Next.js apps, you can deploy one or both to Vercel. Each
+would be a separate Vercel project.
+
+Steps to deploy a Vercel project with Convex can be found
+[here](https://docs.convex.dev/production/hosting/vercel#deploying-to-vercel).
+
+
+### Production Environment Variables
+
+- **NEXT_PUBLIC_APP_URL**
+  _Optional for apps/web_
+  This is the URL for your deployed app, e.g., `https://your-app.vercel.app`.
+  It is used by the marketing site to link to the app.
+
+- **NEXT_PUBLIC_CONVEX_URL**
+  _Required for both apps_
+  This is the URL for your deployed Convex instance, e.g.,
+  `https://your-project-name.convex.cloud`.
