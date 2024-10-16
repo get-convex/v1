@@ -20,7 +20,6 @@
     {
       "title": "App URL",
       "description": "The URL of the app, used for linking from the web app.",
-      "instructions": "Enter the URL of the app.",
       "variables": [
         {
           "name": "NEXT_PUBLIC_APP_URL",
