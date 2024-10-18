@@ -34,7 +34,7 @@ reuse and best practices that will grow with your business.
 [i18n](https://next-international.vercel.app/) - Internationalization<br>
 [Sentry](https://sentry.io/) - Error handling/monitoring<br>
 [OpenPanel](https://openpanel.dev/) - Analytics<br>
-[Polar](https://polar.sh) - Billing (coming soon)<br>
+[Polar](https://polar.sh) - Billing<br>
 [nuqs](https://nuqs.47ng.com/) - Type-safe search params state manager<br>
 [next-themes](https://next-themes-example.vercel.app/) - Theme manager<br>
 
