@@ -12,7 +12,7 @@
     <a href="#whats-included"><strong>What's included</strong></a> ·
     <a href="#prerequisites"><strong>Prerequisites</strong></a> ·
     <a href="#getting-started"><strong>Getting Started</strong></a> ·
-    <a href="#how-to-use"><strong>How to use</strong></a>
+    <a href="#deployment"><strong>Deploying to Production</strong></a>
   </p>
 </p>
 
@@ -143,14 +143,14 @@ If you prefer to set up the project manually, follow these steps:
    - Copy the contents of `packages/backend/.env`
    - Paste these variables into the environment variables panel in your Convex
      dashboard
-   
+
 8. Initialize Polar products and seed database:
    ```bash
    cd packages/backend
    bunx convex run init
    ```
 
-10. Start the development server:
+9. Start the development server:
    ```bash
    bun dev
    ```
