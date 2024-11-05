@@ -3,6 +3,7 @@ import { asyncMap } from "convex-helpers";
 import { v } from "convex/values";
 import { z } from "zod";
 import { mutation, query } from "./_generated/server";
+import { username } from "./utils/validators";
 
 export const getUser = query({
   handler: async (ctx) => {
@@ -42,19 +43,12 @@ export const updateUsername = mutation({
     if (!userId) {
       return;
     }
-    const schema = z.object({
-      username: z.string({
-        invalid_type_error: "Invalid Username",
-      }),
-    });
-    const validatedFields = schema.safeParse({
-      username: args.username,
-    });
+    const validatedUsername = username.safeParse(args.username);
 
-    if (!validatedFields.success) {
-      throw new Error("Invalid username");
+    if (!validatedUsername.success) {
+      throw new Error(validatedUsername.error.message);
     }
-    await ctx.db.patch(userId, { username: validatedFields.data.username });
+    await ctx.db.patch(userId, { username: validatedUsername.data });
   },
 });
 
