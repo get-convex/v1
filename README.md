@@ -137,23 +137,20 @@ If you prefer to set up the project manually, follow these steps:
    Follow the prompts to configure authentication for your project.
 
 6. Set up environment variables:
-   You have two options for setting up the required environment variables:
-
-   a. Use the setup script (recommended for first-time setup):
-      ```bash
-      cd ../..
-      bun run setup-env
-      ```
-      This script will guide you through setting up various services and environment variables. The script is located at `scripts/setup-env.ts`, and its configuration is in `setup-config.json`. You can review these files to see what the script does.
-
-   b. Manually set up services and environment variables:
-      If you prefer to set up services manually or want more control over the process, refer to the [Detailed Service Setup Instructions](#detailed-service-setup-instructions) section below.
+   If you prefer to set up services manually or want more control over the process, refer to the [Detailed Service Setup Instructions](#detailed-service-setup-instructions) section below.
 
 7. Copy Convex environment variables:
    - Copy the contents of `packages/backend/.env`
-   - Paste these variables into the environment variables panel in your Convex dashboard
+   - Paste these variables into the environment variables panel in your Convex
+     dashboard
+   
+8. Initialize Polar products and seed database:
+   ```bash
+   cd packages/backend
+   bunx convex run init
+   ```
 
-8. Start the development server:
+10. Start the development server:
    ```bash
    bun dev
    ```
