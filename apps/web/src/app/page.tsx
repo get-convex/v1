@@ -36,7 +36,7 @@ export default function Page() {
       </span> */}
 
       <div className="mt-10 mb-8">
-        <CopyText value="npm create @erquhart/convex-v1@latest" />
+        <CopyText value="npm create @convex-dev/v1@latest" />
       </div>
 
       <TooltipProvider delayDuration={0}>
