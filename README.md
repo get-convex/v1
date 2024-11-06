@@ -81,7 +81,7 @@ You have two options to create a new v1 project:
 To create a new v1 project using our CLI tool, run:
 
 ```bash
-bun create @erquhart/convex-v1@latest
+bun create @convex-dev/create-v1@latest
 ```
 
 This command will guide you through the process of setting up your project, including:
