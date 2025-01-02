@@ -15,13 +15,11 @@ import schema from "./schema";
 const createCheckout = async ({
   customerEmail,
   productPriceId,
-  successUrl,
-  subscriptionId,
+  successUrl
 }: {
   customerEmail: string;
   productPriceId: string;
   successUrl: string;
-  subscriptionId?: string;
 }) => {
   const polar = new Polar({
     server: "sandbox",
@@ -30,8 +28,7 @@ const createCheckout = async ({
   const result = await polar.checkouts.create({
     productPriceId,
     successUrl,
-    customerEmail,
-    subscriptionId,
+    customerEmail
   });
   return result;
 };
@@ -98,8 +95,7 @@ export const getProOnboardingCheckoutUrl = action({
     const checkout = await createCheckout({
       customerEmail: user.email,
       productPriceId: price.polarId,
-      successUrl: `${env.SITE_URL}/settings/billing`,
-      subscriptionId: user.subscription?.polarId,
+      successUrl: `${env.SITE_URL}/settings/billing`
     });
     return checkout.url;
   },
