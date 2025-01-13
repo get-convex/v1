@@ -18,7 +18,11 @@
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+
+    "paths": {
+      "@v1/backend/*": ["../../packages/backend/*"]
+    }
   },
   "include": ["./**/*"],
   "exclude": ["./_generated"]
