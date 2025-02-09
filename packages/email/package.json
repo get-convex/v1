@@ -16,6 +16,6 @@
     "@react-email/tailwind": "^0.1.0"
   },
   "devDependencies": {
-    "react-email": "^3.0.1"
+    "react-email": "^3.0.6"
   }
 }
