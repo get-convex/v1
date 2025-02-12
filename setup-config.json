@@ -67,13 +67,8 @@
     {
       "title": "Polar",
       "description": "Polar is a billing platform that provides subscription management and billing.",
-      "instructions": "Set up a creator account at https://sandbox.polar.sh/dashboard/create for billing and obtain your access token and organization ID.",
+      "instructions": "Create an account at https://polar.sh/, set up an organization using the `Sell with Polar` button. Finally, switch sandbox mode to to get the right env variables, or go here: https://sandbox.polar.sh/dashboard/create for billing and obtain your access token and organization ID.",
       "variables": [
-        {
-          "name": "POLAR_ORGANIZATION_ID",
-          "projects": ["convex"],
-          "details": "Find your Organization ID in the Polar dashboard sidebar under 'Organization' > 'Settings'."
-        },
         {
           "name": "POLAR_WEBHOOK_SECRET",
           "projects": ["convex"],
@@ -85,7 +80,7 @@
         {
           "name": "POLAR_ACCESS_TOKEN",
           "projects": ["convex"],
-          "details": "Generate a personal access token in the Polar dashboard under 'Account' > 'Developer settings'. Required permissions: 'products:read', 'products:write', 'subscriptions:read'."
+          "details": "Generate an Organization Access Token in the Polar dashboard under 'Settings' > 'Developers'. Required permissions: 'checkouts:read', 'checkouts:write', 'products:read', 'products:write', 'subscriptions:read'."
         }
       ],
       "additionalInstructions": [

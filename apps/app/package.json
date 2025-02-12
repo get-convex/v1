@@ -14,7 +14,7 @@
   "dependencies": {
     "@auth/core": "^0.34.2",
     "@convex-dev/auth": "^0.0.71",
-    "@polar-sh/sdk": "^0.11.0",
+    "@polar-sh/sdk": "^0.25.0",
     "@tanstack/react-form": "^0.33.0",
     "@tanstack/zod-form-adapter": "^0.33.0",
     "@v1/analytics": "workspace:*",

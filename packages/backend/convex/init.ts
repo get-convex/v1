@@ -55,7 +55,6 @@ export default internalAction(async (ctx) => {
     accessToken: env.POLAR_ACCESS_TOKEN,
   });
   const products = await polar.products.list({
-    organizationId: env.POLAR_ORGANIZATION_ID,
     isArchived: false,
   });
   if (products?.result?.items?.length) {
@@ -66,7 +65,6 @@ export default internalAction(async (ctx) => {
   await asyncMap(seedProducts, async (product) => {
     // Create Polar product.
     const polarProduct = await polar.products.create({
-      organizationId: env.POLAR_ORGANIZATION_ID,
       name: product.name,
       description: product.description,
       prices: Object.entries(product.prices).map(([interval, amount]) => ({
@@ -95,29 +93,29 @@ export default internalAction(async (ctx) => {
         ...(!monthPrice
           ? {}
           : {
-              month: {
-                usd: {
-                  polarId: monthPrice?.id,
-                  amount:
-                    monthPrice.amountType === "fixed"
-                      ? monthPrice.priceAmount
-                      : 0,
-                },
+            month: {
+              usd: {
+                polarId: monthPrice?.id,
+                amount:
+                  monthPrice.amountType === "fixed"
+                    ? monthPrice.priceAmount
+                    : 0,
               },
-            }),
+            },
+          }),
         ...(!yearPrice
           ? {}
           : {
-              year: {
-                usd: {
-                  polarId: yearPrice?.id,
-                  amount:
-                    yearPrice.amountType === "fixed"
-                      ? yearPrice.priceAmount
-                      : 0,
-                },
+            year: {
+              usd: {
+                polarId: yearPrice?.id,
+                amount:
+                  yearPrice.amountType === "fixed"
+                    ? yearPrice.priceAmount
+                    : 0,
               },
-            }),
+            },
+          }),
       },
     });
   });
