@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@calcom/embed-react": "^1.5.0",
+    "@convex-dev/auth": "^0.0.80",
     "@v1/analytics": "workspace:*",
     "@v1/ui": "workspace:*",
     "convex": "^1.16.3",

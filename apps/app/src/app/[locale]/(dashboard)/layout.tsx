@@ -10,15 +10,15 @@ export default async function Layout({
   const user = await fetchQuery(
     api.users.getUser,
     {},
-    { token: convexAuthNextjsToken() },
+    { token: await convexAuthNextjsToken() },
   );
-  if (!user?.username || !user?.subscription) {
+  if (!user?.username) {
     return redirect("/onboarding");
   }
   const preloadedUser = await preloadQuery(
     api.users.getUser,
     {},
-    { token: convexAuthNextjsToken() },
+    { token: await convexAuthNextjsToken() },
   );
   return (
     <div className="flex min-h-[100vh] w-full flex-col bg-secondary dark:bg-black">
