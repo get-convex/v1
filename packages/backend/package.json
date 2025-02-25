@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@auth/core": "0.37.0",
     "@convex-dev/auth": "^0.0.80",
     "@convex-dev/polar": "npm:@erquhart/convex-polar@0.2.0-alpha.5",
     "@polar-sh/sdk": "^0.26.1",
