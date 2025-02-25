@@ -14,7 +14,7 @@
   "dependencies": {
     "@auth/core": "^0.34.2",
     "@convex-dev/auth": "^0.0.80",
-    "@convex-dev/polar": "convex-dev-polar.tgz",
+    "@convex-dev/polar": "npm:@erquhart/convex-polar",
     "@polar-sh/sdk": "^0.26.1",
     "@tanstack/react-form": "^0.33.0",
     "@tanstack/zod-form-adapter": "^0.33.0",

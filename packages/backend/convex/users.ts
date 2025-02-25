@@ -3,7 +3,7 @@ import { asyncMap } from "convex-helpers";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { action, internalMutation, mutation, query } from "./_generated/server";
-import { polar } from "./polar";
+import { polar } from "./subscriptions";
 import { username } from "./utils/validators";
 
 export const getUser = query({
