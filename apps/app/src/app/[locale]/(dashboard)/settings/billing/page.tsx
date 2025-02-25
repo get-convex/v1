@@ -64,7 +64,7 @@ const Plan = ({
 
 export default function BillingSettings() {
   const user = useQuery(api.users.getUser);
-  const products = useQuery(api.subscriptions.getProducts);
+  const products = useQuery(api.subscriptions.listAllProducts);
 
   const [selectedPlanInterval, setSelectedPlanInterval] = useState<
     "month" | "year"
@@ -74,7 +74,12 @@ export default function BillingSettings() {
     return null;
   }
 
-  console.log("products", products);
+  const monthlyProProduct = products?.find(
+    (product) => product.recurringInterval === "month",
+  );
+  const yearlyProProduct = products?.find(
+    (product) => product.recurringInterval === "year",
+  );
 
   return (
     <div className="flex h-full w-full flex-col gap-6">
@@ -104,9 +109,7 @@ export default function BillingSettings() {
           <p className="flex items-start gap-1 text-sm font-normal text-primary/60">
             You are currently on the{" "}
             <span className="flex h-[18px] items-center rounded-md bg-primary/10 px-1.5 text-sm font-medium text-primary/80">
-              {user.subscription?.productKey
-                ? user.subscription.product.name
-                : "Free"}
+              {user.subscription ? user.subscription.product.name : "Free"}
             </span>
             plan.
           </p>
@@ -120,12 +123,12 @@ export default function BillingSettings() {
               isCurrent={!user.subscription}
               amount={0}
             />
-            {selectedPlanInterval === "month" && products?.proMonthly && (
+            {selectedPlanInterval === "month" && monthlyProProduct && (
               <Plan
-                name={products?.proMonthly.name}
-                description={products?.proMonthly.description}
+                name={monthlyProProduct.name}
+                description={monthlyProProduct.description}
                 isCurrent={false}
-                amount={products?.proMonthly.prices[0]?.priceAmount ?? 0}
+                amount={monthlyProProduct.prices[0]?.priceAmount ?? 0}
                 interval={selectedPlanInterval}
                 onChangeInterval={() => {
                   setSelectedPlanInterval((state) =>
@@ -134,12 +137,12 @@ export default function BillingSettings() {
                 }}
               />
             )}
-            {selectedPlanInterval === "year" && products?.proYearly && (
+            {selectedPlanInterval === "year" && yearlyProProduct && (
               <Plan
-                name={products?.proYearly.name}
-                description={products?.proYearly.description}
+                name={yearlyProProduct.name}
+                description={yearlyProProduct.description}
                 isCurrent={false}
-                amount={products?.proYearly.prices[0]?.priceAmount ?? 0}
+                amount={yearlyProProduct.prices[0]?.priceAmount ?? 0}
                 interval={selectedPlanInterval}
                 onChangeInterval={() => {
                   setSelectedPlanInterval((state) =>
@@ -151,52 +154,53 @@ export default function BillingSettings() {
           </div>
         )}
 
-        {(user.subscription?.productKey === "proMonthly" ||
-          user.subscription?.productKey === "proYearly") && (
-          <div className="flex w-full flex-col items-center justify-evenly gap-2 border-border p-6 pt-0">
-            <div className="flex w-full items-center overflow-hidden rounded-md border border-primary/60">
-              <div className="flex w-full flex-col items-start p-4">
-                <div className="flex items-end gap-2">
-                  <span className="text-base font-medium text-primary">
-                    {user.subscription?.product.name}
-                  </span>
-                  <p className="flex items-start gap-1 text-sm font-normal text-primary/60">
-                    {user.subscription.cancelAtPeriodEnd === true ? (
-                      <span className="flex h-[18px] items-center text-sm font-medium text-red-500">
-                        Expires
-                      </span>
-                    ) : (
-                      <span className="flex h-[18px] items-center text-sm font-medium text-green-500">
-                        Renews
-                      </span>
-                    )}
-                    on:{" "}
-                    {new Date(
-                      user.subscription.currentPeriodEnd ?? 0 * 1000,
-                    ).toLocaleDateString("en-US")}
-                    .
+        {user.subscription &&
+          (user.subscription?.productId === monthlyProProduct?.id ||
+            user.subscription?.productId === yearlyProProduct?.id) && (
+            <div className="flex w-full flex-col items-center justify-evenly gap-2 border-border p-6 pt-0">
+              <div className="flex w-full items-center overflow-hidden rounded-md border border-primary/60">
+                <div className="flex w-full flex-col items-start p-4">
+                  <div className="flex items-end gap-2">
+                    <span className="text-base font-medium text-primary">
+                      {user.subscription?.product.name}
+                    </span>
+                    <p className="flex items-start gap-1 text-sm font-normal text-primary/60">
+                      {user.subscription.cancelAtPeriodEnd === true ? (
+                        <span className="flex h-[18px] items-center text-sm font-medium text-red-500">
+                          Expires
+                        </span>
+                      ) : (
+                        <span className="flex h-[18px] items-center text-sm font-medium text-green-500">
+                          Renews
+                        </span>
+                      )}
+                      on:{" "}
+                      {new Date(
+                        user.subscription.currentPeriodEnd ?? 0 * 1000,
+                      ).toLocaleDateString("en-US")}
+                      .
+                    </p>
+                  </div>
+                  <p className="text-start text-sm font-normal text-primary/60">
+                    {user.subscription?.product.description}
                   </p>
                 </div>
-                <p className="text-start text-sm font-normal text-primary/60">
-                  {user.subscription?.product.description}
-                </p>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
         {!user.subscription && (
           <div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-t border-border bg-secondary px-6 py-3 dark:bg-card">
             <p className="text-sm font-normal text-primary/60">
               You will not be charged for testing the subscription upgrade.
             </p>
-            {products?.proMonthly && products?.proYearly && (
+            {monthlyProProduct && yearlyProProduct && (
               <CheckoutLink
                 polarApi={api.subscriptions}
                 productIds={[
                   selectedPlanInterval === "month"
-                    ? products.proMonthly.id
-                    : products.proYearly.id,
+                    ? monthlyProProduct.id
+                    : yearlyProProduct.id,
                 ]}
               >
                 <Button type="submit" size="sm" onClick={() => {}}>

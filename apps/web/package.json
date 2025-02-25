@@ -14,6 +14,7 @@
   "dependencies": {
     "@calcom/embed-react": "^1.5.0",
     "@convex-dev/auth": "^0.0.80",
+    "@convex-dev/polar": "npm:@erquhart/convex-polar@0.2.0-alpha.3",
     "@v1/analytics": "workspace:*",
     "@v1/ui": "workspace:*",
     "convex": "^1.16.3",

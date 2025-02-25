@@ -12,7 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@convex-dev/auth": "^0.0.80",
-    "@convex-dev/polar": "npm:@erquhart/convex-polar",
+    "@convex-dev/polar": "npm:@erquhart/convex-polar@0.2.0-alpha.5",
     "@polar-sh/sdk": "^0.26.1",
     "convex": "^1.19.2",
     "convex-helpers": "^0.1.63",

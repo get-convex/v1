@@ -4,11 +4,6 @@ import type { Id } from "./_generated/dataModel";
 import { query } from "./_generated/server";
 
 export const polar = new Polar(components.polar, {
-  products: {
-    // Map your product keys to Polar product IDs (you can also use env vars for this)
-    proMonthly: "d078dc51-5c4c-4284-9b8b-512cfef8f6eb",
-    proYearly: "0d669a2a-b83d-4441-9fd3-1fa1b3601e37",
-  },
   // Provide a function the component can use to get the current user's ID and email
   getUserInfo: async (ctx): Promise<{ userId: Id<"users">; email: string }> => {
     const user = await ctx.runQuery(api.users.getUser);
@@ -29,7 +24,7 @@ export const polar = new Polar(components.polar, {
 export const {
   changeCurrentSubscription,
   cancelCurrentSubscription,
-  getProducts,
+  listAllProducts,
 } = polar.api();
 
 export const { generateCheckoutLink, generateCustomerPortalUrl } =

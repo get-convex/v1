@@ -138,8 +138,6 @@ export declare const components: {
         "internal",
         { userId: string },
         {
-          _creationTime: number;
-          _id: string;
           amount: number | null;
           cancelAtPeriodEnd: boolean;
           checkoutId: string | null;
@@ -154,8 +152,6 @@ export declare const components: {
           modifiedAt: string | null;
           priceId: string;
           product: {
-            _creationTime: number;
-            _id: string;
             createdAt: string;
             description: string | null;
             id: string;
@@ -207,20 +203,13 @@ export declare const components: {
         "query",
         "internal",
         { userId: string },
-        {
-          _creationTime: number;
-          _id: string;
-          id: string;
-          userId: string;
-        } | null
+        { id: string; userId: string } | null
       >;
       getProduct: FunctionReference<
         "query",
         "internal",
         { id: string },
         {
-          _creationTime: number;
-          _id: string;
           createdAt: string;
           description: string | null;
           id: string;
@@ -268,8 +257,6 @@ export declare const components: {
         "internal",
         { id: string },
         {
-          _creationTime: number;
-          _id: string;
           amount: number | null;
           cancelAtPeriodEnd: boolean;
           checkoutId: string | null;
@@ -300,8 +287,6 @@ export declare const components: {
         "internal",
         { customerId: string },
         Array<{
-          _creationTime: number;
-          _id: string;
           amount: number | null;
           cancelAtPeriodEnd: boolean;
           checkoutId: string | null;
@@ -374,8 +359,6 @@ export declare const components: {
         "internal",
         { userId: string },
         Array<{
-          _creationTime: number;
-          _id: string;
           amount: number | null;
           cancelAtPeriodEnd: boolean;
           checkoutId: string | null;
@@ -390,8 +373,6 @@ export declare const components: {
           modifiedAt: string | null;
           priceId: string;
           product: {
-            _creationTime: number;
-            _id: string;
             createdAt: string;
             description: string | null;
             id: string;
