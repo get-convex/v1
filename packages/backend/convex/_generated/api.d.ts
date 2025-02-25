@@ -13,6 +13,7 @@ import type * as email_index from "../email/index.js";
 import type * as email_templates_subscriptionEmail from "../email/templates/subscriptionEmail.js";
 import type * as env from "../env.js";
 import type * as http from "../http.js";
+import type * as init from "../init.js";
 import type * as subscriptions from "../subscriptions.js";
 import type * as users from "../users.js";
 import type * as utils_validators from "../utils/validators.js";
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   "email/templates/subscriptionEmail": typeof email_templates_subscriptionEmail;
   env: typeof env;
   http: typeof http;
+  init: typeof init;
   subscriptions: typeof subscriptions;
   users: typeof users;
   "utils/validators": typeof utils_validators;
