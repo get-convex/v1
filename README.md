@@ -232,11 +232,16 @@ If you choose to manually set up services and environment variables, follow thes
 2. Add the following to `packages/backend/.env`:
    ```
    # Generate this in Polar dashboard under 'Account' > 'Developer settings'
-   # Required permissions: 'products:read', 'products:write', 'subscriptions:read'
-   POLAR_ACCESS_TOKEN=pat_foobarfoobarfoobarfoobarfoobar42
 
-   # Find this in Polar dashboard under 'Settings'
-   POLAR_ORGANIZATION_ID=org_foobarfoobar42
+   # Required permissions:
+   # products:read, products:write,
+   # subscriptions:read, subscriptions:write,
+   # customers:read, customers:write,
+   # checkouts:read, checkouts:write,
+   # checkout_links:read, checkout_links:write,
+   # customer_portal:read, customer_portal:write,
+   # customer_sessions:write
+   POLAR_ORGANIZATION_TOKEN=polar_oat_foobarfoobarfoobarfoobarfoobar42
 
    # Create a webhook in Polar dashboard under 'Settings' > 'Webhooks'
    # The webhook should point to: https://your-convex-deployment.convex.site/events/polar

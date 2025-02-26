@@ -78,9 +78,9 @@
           ]
         },
         {
-          "name": "POLAR_ACCESS_TOKEN",
+          "name": "POLAR_ORGANIZATION_TOKEN",
           "projects": ["convex"],
-          "details": "Generate an Organization Access Token in the Polar dashboard under 'Settings' > 'Developers'. Required permissions: 'checkouts:read', 'checkouts:write', 'products:read', 'products:write', 'subscriptions:read'."
+          "details": "Generate an Organization Access Token in the Polar dashboard under 'Settings' > 'Developers'. Required permissions: 'checkouts:read', 'checkouts:write', 'products:read', 'products:write', 'subscriptions:read', 'subscriptions:write', 'customers:read', 'customers:write', 'checkout_links:read', 'checkout_links:write', 'customer_portal:read', 'customer_portal:write', 'customer_sessions:write'."
         }
       ],
       "additionalInstructions": [
