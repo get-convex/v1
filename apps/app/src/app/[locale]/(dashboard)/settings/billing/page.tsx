@@ -195,18 +195,18 @@ export default function BillingSettings() {
               You will not be charged for testing the subscription upgrade.
             </p>
             {monthlyProProduct && yearlyProProduct && (
-              <CheckoutLink
-                polarApi={api.subscriptions}
-                productIds={[
-                  selectedPlanInterval === "month"
-                    ? monthlyProProduct.id
-                    : yearlyProProduct.id,
-                ]}
-              >
-                <Button type="submit" size="sm" onClick={() => {}}>
+              <Button type="submit" size="sm" asChild>
+                <CheckoutLink
+                  polarApi={api.subscriptions}
+                  productIds={[
+                    selectedPlanInterval === "month"
+                      ? monthlyProProduct.id
+                      : yearlyProProduct.id,
+                  ]}
+                >
                   Upgrade to PRO
-                </Button>
-              </CheckoutLink>
+                </CheckoutLink>
+              </Button>
             )}
           </div>
         )}

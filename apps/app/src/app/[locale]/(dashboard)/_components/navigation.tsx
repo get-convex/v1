@@ -1,7 +1,8 @@
 "use client";
 
 import { useAuthActions } from "@convex-dev/auth/react";
-import type { api } from "@v1/backend/convex/_generated/api";
+import { CheckoutLink } from "@convex-dev/polar/react";
+import { api } from "@v1/backend/convex/_generated/api";
 import { Button, buttonVariants } from "@v1/ui/button";
 import {
   DropdownMenu,
@@ -30,8 +31,10 @@ import { ThemeSwitcher } from "./theme-switcher";
 
 export function Navigation({
   preloadedUser,
+  preloadedProducts,
 }: {
   preloadedUser: Preloaded<typeof api.users.getUser>;
+  preloadedProducts: Preloaded<typeof api.subscriptions.listAllProducts>;
 }) {
   const { signOut } = useAuthActions();
   const pathname = usePathname();
@@ -41,6 +44,14 @@ export function Navigation({
   const isBillingPath = pathname === "/settings/billing";
 
   const user = usePreloadedQuery(preloadedUser);
+  const products = usePreloadedQuery(preloadedProducts);
+
+  const monthlyProProduct = products?.find(
+    (product) => product.recurringInterval === "month",
+  );
+  const yearlyProProduct = products?.find(
+    (product) => product.recurringInterval === "year",
+  );
 
   if (!user) {
     return null;
@@ -112,13 +123,16 @@ export function Navigation({
 
               <DropdownMenuSeparator className="mx-0 my-2" />
               <DropdownMenuItem className="p-0 focus:bg-transparent">
-                <Button
-                  size="sm"
-                  className="w-full"
-                  onClick={() => router.push("/settings/billing")}
-                >
-                  Upgrade to PRO
-                </Button>
+                {monthlyProProduct && yearlyProProduct && (
+                  <Button size="sm" className="w-full" asChild>
+                    <CheckoutLink
+                      polarApi={api.subscriptions}
+                      productIds={[monthlyProProduct.id, yearlyProProduct.id]}
+                    >
+                      Upgrade to PRO
+                    </CheckoutLink>
+                  </Button>
+                )}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
