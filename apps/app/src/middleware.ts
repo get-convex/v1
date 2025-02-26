@@ -15,10 +15,12 @@ const I18nMiddleware = createI18nMiddleware({
 const isSignInPage = createRouteMatcher(["/login"]);
 
 export default convexAuthNextjsMiddleware(async (request) => {
-  if (isSignInPage(request) && (await isAuthenticatedNextjs())) {
+  const isAuthenticated = await isAuthenticatedNextjs();
+  const isSignIn = isSignInPage(request);
+  if (isSignIn && isAuthenticated) {
     return nextjsMiddlewareRedirect(request, "/");
   }
-  if (!isSignInPage(request) && !(await isAuthenticatedNextjs())) {
+  if (!isSignIn && !isAuthenticated) {
     return nextjsMiddlewareRedirect(request, "/login");
   }
 

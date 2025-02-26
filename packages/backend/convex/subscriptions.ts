@@ -1,7 +1,6 @@
 import { Polar } from "@convex-dev/polar";
 import { api, components } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
-import { query } from "./_generated/server";
 
 export const polar = new Polar(components.polar, {
   // Provide a function the component can use to get the current user's ID and email
