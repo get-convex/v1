@@ -244,7 +244,7 @@ If you choose to manually set up services and environment variables, follow thes
    POLAR_ORGANIZATION_TOKEN=polar_oat_foobarfoobarfoobarfoobarfoobar42
 
    # Create a webhook in Polar dashboard under 'Settings' > 'Webhooks'
-   # The webhook should point to: https://your-convex-deployment.convex.site/events/polar
+   # The webhook should point to: https://your-convex-deployment.convex.site/polar/events
    POLAR_WEBHOOK_SECRET=whsec_foobarfoobarfoobarfoobarfoobar42
    ```
 
