@@ -31,30 +31,19 @@ export default function OnboardingUsername() {
     },
   });
 
+  console.log("user", user);
+
   useEffect(() => {
     if (!user) {
       return;
     }
-    if (user?.username && user?.subscription) {
+    if (user?.username) {
       router.push("/");
     }
   }, [user]);
 
   if (!user) {
     return null;
-  }
-
-  const showSubscriptionPending = !!user.username;
-
-  if (showSubscriptionPending) {
-    return (
-      <div className="flex h-screen w-screen flex-col items-center justify-center gap-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-center text-base font-normal text-primary/60">
-          Processing your subscription. This may take a moment...
-        </p>
-      </div>
-    );
   }
 
   return (

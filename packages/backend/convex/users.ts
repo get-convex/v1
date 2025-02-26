@@ -1,8 +1,9 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { asyncMap } from "convex-helpers";
 import { v } from "convex/values";
-import { z } from "zod";
-import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
+import { action, internalMutation, mutation, query } from "./_generated/server";
+import { polar } from "./subscriptions";
 import { username } from "./utils/validators";
 
 export const getUser = query({
@@ -15,18 +16,13 @@ export const getUser = query({
     if (!user) {
       return;
     }
-    const subscription = await ctx.db
-      .query("subscriptions")
-      .withIndex("userId", (q) => q.eq("userId", userId))
-      .unique();
-    const plan = subscription?.planId
-      ? await ctx.db.get(subscription.planId)
-      : undefined;
+    const subscription = await polar.getCurrentSubscription(ctx, {
+      userId: user._id,
+    });
     return {
       ...user,
       name: user.username || user.name,
       subscription,
-      plan,
       avatarUrl: user.imageId
         ? await ctx.storage.getUrl(user.imageId)
         : undefined,
@@ -87,33 +83,18 @@ export const removeUserImage = mutation({
   },
 });
 
-export const deleteCurrentUserAccount = mutation({
-  args: {},
-  handler: async (ctx) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      return;
-    }
-    const user = await ctx.db.get(userId);
-    if (!user) {
-      throw new Error("User not found");
-    }
-    const subscription = await ctx.db
-      .query("subscriptions")
-      .withIndex("userId", (q) => q.eq("userId", userId))
-      .unique();
-    if (!subscription) {
-      console.error("No subscription found");
-    } else {
-      await ctx.db.delete(subscription._id);
-    }
+export const deleteUserAccount = internalMutation({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
     await asyncMap(
       ["google" /* add other providers as needed */],
       async (provider) => {
         const authAccount = await ctx.db
           .query("authAccounts")
           .withIndex("userIdAndProvider", (q) =>
-            q.eq("userId", userId).eq("provider", provider),
+            q.eq("userId", args.userId).eq("provider", provider),
           )
           .unique();
         if (!authAccount) {
@@ -122,6 +103,29 @@ export const deleteCurrentUserAccount = mutation({
         await ctx.db.delete(authAccount._id);
       },
     );
-    await ctx.db.delete(userId);
+    await ctx.db.delete(args.userId);
+  },
+});
+
+export const deleteCurrentUserAccount = action({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      return;
+    }
+    const subscription = await polar.getCurrentSubscription(ctx, {
+      userId,
+    });
+    if (!subscription) {
+      console.error("No subscription found");
+    } else {
+      await polar.cancelSubscription(ctx, {
+        revokeImmediately: true,
+      });
+    }
+    await ctx.runMutation(internal.users.deleteUserAccount, {
+      userId,
+    });
   },
 });
