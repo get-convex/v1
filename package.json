@@ -1,7 +1,11 @@
 {
   "name": "v1",
   "private": true,
-  "workspaces": ["packages/*", "apps/*", "tooling/*"],
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "tooling/*"
+  ],
   "scripts": {
     "build": "turbo build",
     "clean": "git clean -xdf node_modules",
@@ -33,5 +37,6 @@
   "packageManager": "bun@1.1.26",
   "dependencies": {
     "@auth/core": "0.37.0"
-  }
+  },
+  "version": "0.0.1"
 }
