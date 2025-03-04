@@ -1,35 +1,45 @@
-import { Polar } from "@polar-sh/sdk";
 import { asyncMap } from "convex-helpers";
 import { internal } from "./_generated/api";
 import { internalAction, internalMutation } from "./_generated/server";
-import { env } from "./env";
-import schema, { CURRENCIES, INTERVALS, type PlanKey, PLANS } from "./schema";
+import schema, { INTERVALS, type PlanKey, PLANS } from "./schema";
+import { polar } from "./subscriptions";
 
 const seedProducts = [
   {
     key: PLANS.FREE,
     name: "Free",
     description: "Some of the things, free forever.",
-    amountType: "free",
-    prices: {
-      [INTERVALS.MONTH]: {
-        [CURRENCIES.USD]: 0,
+    recurringInterval: INTERVALS.MONTH,
+    prices: [
+      {
+        priceAmount: 0,
+        amountType: "free",
       },
-    },
+    ],
   },
   {
     key: PLANS.PRO,
     name: "Pro",
     description: "All the things for one low monthly price.",
-    amountType: "fixed",
-    prices: {
-      [INTERVALS.MONTH]: {
-        [CURRENCIES.USD]: 2000,
+    recurringInterval: INTERVALS.MONTH,
+    prices: [
+      {
+        priceAmount: 599,
+        amountType: "fixed",
       },
-      [INTERVALS.YEAR]: {
-        [CURRENCIES.USD]: 20000,
+    ],
+  },
+  {
+    key: PLANS.PRO_YEARLY,
+    name: "Pro Yearly",
+    description: "All the things for one low yearly price.",
+    recurringInterval: INTERVALS.YEAR,
+    prices: [
+      {
+        priceAmount: 5990,
+        amountType: "fixed",
       },
-    },
+    ],
   },
 ] as const;
 
@@ -41,84 +51,37 @@ export const insertSeedPlan = internalMutation({
       key: args.key,
       name: args.name,
       description: args.description,
+      recurringInterval: args.recurringInterval,
       prices: args.prices,
     });
   },
 });
 
 export default internalAction(async (ctx) => {
-  /**
-   * Stripe Products.
-   */
-  const polar = new Polar({
-    server: "sandbox",
-    accessToken: env.POLAR_ACCESS_TOKEN,
-  });
-  const products = await polar.products.list({
-    organizationId: env.POLAR_ORGANIZATION_ID,
-    isArchived: false,
-  });
-  if (products?.result?.items?.length) {
-    console.info("🏃‍♂️ Skipping Polar products creation and seeding.");
-    return;
-  }
-
   await asyncMap(seedProducts, async (product) => {
     // Create Polar product.
-    const polarProduct = await polar.products.create({
-      organizationId: env.POLAR_ORGANIZATION_ID,
+    const polarProduct = await polar.sdk.products.create({
       name: product.name,
       description: product.description,
-      prices: Object.entries(product.prices).map(([interval, amount]) => ({
-        amountType: product.amountType,
-        priceAmount: amount.usd,
-        recurringInterval: interval,
-      })),
+      recurringInterval: product.recurringInterval,
+      prices: [
+        {
+          priceAmount: product.prices[0].priceAmount,
+          amountType: product.prices[0].amountType,
+        }
+      ],
     });
-    const monthPrice = polarProduct.prices.find(
-      (price) =>
-        price.type === "recurring" &&
-        price.recurringInterval === INTERVALS.MONTH,
-    );
-    const yearPrice = polarProduct.prices.find(
-      (price) =>
-        price.type === "recurring" &&
-        price.recurringInterval === INTERVALS.YEAR,
-    );
 
     await ctx.runMutation(internal.init.insertSeedPlan, {
       polarProductId: polarProduct.id,
       key: product.key as PlanKey,
       name: product.name,
       description: product.description,
+      recurringInterval: product.recurringInterval,
       prices: {
-        ...(!monthPrice
-          ? {}
-          : {
-              month: {
-                usd: {
-                  polarId: monthPrice?.id,
-                  amount:
-                    monthPrice.amountType === "fixed"
-                      ? monthPrice.priceAmount
-                      : 0,
-                },
-              },
-            }),
-        ...(!yearPrice
-          ? {}
-          : {
-              year: {
-                usd: {
-                  polarId: yearPrice?.id,
-                  amount:
-                    yearPrice.amountType === "fixed"
-                      ? yearPrice.priceAmount
-                      : 0,
-                },
-              },
-            }),
-      },
+        priceAmount: product.prices[0].priceAmount,
+        amountType: product.prices[0].amountType,
+      }
     });
   });
 

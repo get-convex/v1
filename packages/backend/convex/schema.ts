@@ -25,10 +25,12 @@ export type Interval = Infer<typeof intervalValidator>;
 export const PLANS = {
   FREE: "free",
   PRO: "pro",
+  PRO_YEARLY: "pro_yearly",
 } as const;
 export const planKeyValidator = v.union(
   v.literal(PLANS.FREE),
   v.literal(PLANS.PRO),
+  v.literal(PLANS.PRO_YEARLY),
 );
 export type PlanKey = Infer<typeof planKeyValidator>;
 
@@ -65,9 +67,10 @@ export default defineSchema({
     polarProductId: v.string(),
     name: v.string(),
     description: v.string(),
+    recurringInterval: intervalValidator,
     prices: v.object({
-      [INTERVALS.MONTH]: v.optional(pricesValidator),
-      [INTERVALS.YEAR]: v.optional(pricesValidator),
+      priceAmount: v.number(),
+      amountType: v.string(),
     }),
   })
     .index("key", ["key"])
